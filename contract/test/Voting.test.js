@@ -1,6 +1,7 @@
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
 const { time } = require("@nomicfoundation/hardhat-toolbox/network-helpers");
+const { anyValue } = require("@nomicfoundation/hardhat-chai-matchers/withArgs");
 
 // ActionType 열거형 값 (Voting.sol의 enum 순서와 동일해야 함)
 const AddAdmin = 0, RemoveAdmin = 1, EmergencyStop = 2, Resume = 3, StartElection = 4;
@@ -158,40 +159,152 @@ describe("Voting - 멀티시그 / 비상정지 / 투표 무결성", function () 
       await expect(voting.connect(voter1).vote(99)).to.be.revertedWith("Invalid candidate");
     });
 
-    it("선거 시간이 지나면 투표가 거부되고 당선자를 조회할 수 있다", async function () {
+    it("선거 시간이 지나면 투표가 거부되고, 결과 확정 후 당선자를 조회할 수 있다", async function () {
       await startRunningElection(1);
       await voting.connect(voter1).vote(0);
       await time.increase(61);
       await expect(voting.connect(voter2).vote(1)).to.be.revertedWith("Election ended");
+      await expect(voting.getWinner()).to.be.revertedWith("Result not finalized"); // 확정 전에는 조회 불가
+      await voting.finalize();
       expect(await voting.getWinner()).to.equal("A");
     });
 
     it("진행 중에는 당선자를 조회할 수 없다", async function () {
       await startRunningElection();
-      await expect(voting.getWinner()).to.be.revertedWith("Election still active");
+      await expect(voting.getWinner()).to.be.revertedWith("Result not finalized");
     });
   });
 
   // ------------------------------------------------------------------
-  // 아래는 "취약점 탐지" 테스트: 현재 컨트랙트가 방어하지 못하는 동작을
+  // 7주차 보완 검증: 6주차에 '취약하다'고 확인했던 V-A, V-B를 고친 뒤,
+  // 같은 공격이 이제 막히는지 확인한다. (6주차에는 이 두 테스트가
+  // 반대로 "공격이 성공한다"를 기대값으로 했고, 그 결과가 Before 증거다.)
+  // ------------------------------------------------------------------
+  describe("5. [7주차 보완 검증] 선거 시작 후 등록 차단 (V-A, V-B)", function () {
+    it("선거 시작 전에는 유권자·후보 등록이 정상적으로 된다", async function () {
+      await voting.connect(owner).addCandidate("A", "회장", "공약A");
+      await voting.connect(owner).registerVoter(voter1.address);
+      expect(await voting.getCandidateCount()).to.equal(1);
+      expect(await voting.registeredVoters(voter1.address)).to.equal(true);
+    });
+
+    it("V-A 방어. 선거 시작 후 관리자 1명이 유권자를 추가 등록하려 하면 거부된다", async function () {
+      await startRunningElection();
+      await expect(voting.connect(owner).registerVoter(outsider.address))
+        .to.be.revertedWith("Election already started");
+      await expect(voting.connect(outsider).vote(0)).to.be.revertedWith("Not registered");
+    });
+
+    it("V-B 방어. 선거 시작 후 관리자 1명이 후보를 추가하려 하면 거부된다", async function () {
+      await startRunningElection();
+      await expect(voting.connect(owner).addCandidate("뒤늦은후보", "회장", "..."))
+        .to.be.revertedWith("Election already started");
+      expect(await voting.getCandidateCount()).to.equal(2);
+    });
+
+    it("강제 종료(정지) 상태에서도 등록은 차단된다", async function () {
+      await startRunningElection();
+      const id = await voting.getProposalCount();
+      await voting.connect(owner).propose(EmergencyStop, ZERO, 0);
+      await voting.connect(admin2).approve(id);
+      expect(await voting.paused()).to.equal(true);
+      await expect(voting.connect(owner).registerVoter(outsider.address))
+        .to.be.revertedWith("Election already started");
+    });
+
+    it("선거가 끝난 뒤에도 등록은 차단된다 (선거 1회용 정책)", async function () {
+      await startRunningElection(1);
+      await time.increase(61);
+      await expect(voting.connect(owner).registerVoter(outsider.address))
+        .to.be.revertedWith("Election already started");
+      await expect(voting.connect(owner).addCandidate("X", "Y", "Z"))
+        .to.be.revertedWith("Election already started");
+    });
+  });
+
+  // ------------------------------------------------------------------
+  // 7주차 보완 검증 2: 타임스탬프 문제(2주차 발견). 컨트랙트가 보는 '지금 시각'은
+  // 마지막 블록의 시각이라, 거래가 없는 동안 화면과 어긋나 getWinner()가 거부된다.
+  // → 종료 후 finalize() 거래로 당선자를 체인에 저장(확정)하는 방식으로 해결.
+  // ------------------------------------------------------------------
+  describe("6. [7주차 보완 검증] 결과 확정 finalize() (타임스탬프 문제, V-F)", function () {
+    it("선거가 진행 중이면 확정할 수 없다", async function () {
+      await startRunningElection();
+      await expect(voting.finalize()).to.be.revertedWith("Election still active");
+    });
+
+    it("선거를 시작한 적이 없으면 확정할 수 없다", async function () {
+      await expect(voting.finalize()).to.be.revertedWith("Election not started");
+    });
+
+    it("종료 후에는 관리자가 아닌 계정도 확정할 수 있고, 당선자가 저장된다", async function () {
+      await startRunningElection(1);
+      await voting.connect(voter2).vote(1);
+      await time.increase(61);
+      await voting.connect(outsider).finalize();
+      expect(await voting.finalized()).to.equal(true);
+      expect(await voting.finalizedWinner()).to.equal("B");
+      expect(await voting.getWinner()).to.equal("B");
+    });
+
+    it("확정은 한 번만 가능하다", async function () {
+      await startRunningElection(1);
+      await time.increase(61);
+      await voting.finalize();
+      await expect(voting.finalize()).to.be.revertedWith("Already finalized");
+    });
+
+    it("확정 후에는 시간이 더 지나도 조회 결과가 변하지 않는다", async function () {
+      await startRunningElection(1);
+      await voting.connect(voter1).vote(0);
+      await time.increase(61);
+      await voting.finalize();
+      await time.increase(100000);
+      expect(await voting.getWinner()).to.equal("A");
+    });
+
+    it("확정하면 ResultFinalized 이벤트가 기록된다", async function () {
+      await startRunningElection(1);
+      await voting.connect(voter1).vote(0);
+      await time.increase(61);
+      await expect(voting.connect(outsider).finalize())
+        .to.emit(voting, "ResultFinalized")
+        .withArgs(outsider.address, "A", anyValue);
+    });
+
+    it("비상 정지 중에는 확정할 수 없다", async function () {
+      await startRunningElection();
+      const id = await voting.getProposalCount();
+      await voting.connect(owner).propose(EmergencyStop, ZERO, 0);
+      await voting.connect(admin2).approve(id);
+      await expect(voting.finalize()).to.be.revertedWith("Election is paused");
+    });
+
+    it("확정된 뒤에는 선거를 다시 시작할 수 없다", async function () {
+      await startRunningElection(1);
+      await time.increase(61);
+      await voting.finalize();
+      const id = await voting.getProposalCount();
+      await voting.connect(owner).propose(StartElection, ZERO, 60);
+      await expect(voting.connect(admin2).approve(id)).to.be.revertedWith("Election already finalized");
+    });
+
+    it("V-F 방어. 후보가 없으면 확정이 의미 있는 메시지로 거부된다", async function () {
+      await setupTwoAdmins();
+      const id = await voting.getProposalCount();
+      await voting.connect(owner).propose(StartElection, ZERO, 1);
+      await voting.connect(admin2).approve(id);
+      await time.increase(61);
+      await expect(voting.finalize()).to.be.revertedWith("No candidates");
+    });
+  });
+
+  // ------------------------------------------------------------------
+  // 아래는 "취약점 탐지" 테스트: 현재 컨트랙트가 아직 방어하지 못하는 동작을
   // 일부러 재현해서 취약점진단보고서의 근거로 쓰기 위한 것.
   // (현재 상태에서는 '취약하다'는 사실을 통과로 기록한다)
   // ------------------------------------------------------------------
-  describe("5. [취약점 탐지] 현재 컨트랙트의 알려진 약점", function () {
-    it("V-A. 선거 진행 중에도 관리자 1명이 단독으로 유권자를 추가 등록할 수 있다", async function () {
-      await startRunningElection();
-      // 멀티시그 대상이 아닌 registerVoter → 관리자 1명이 선거 중 임의 주소를 유권자로 등록
-      await voting.connect(owner).registerVoter(outsider.address);
-      await voting.connect(outsider).vote(0);
-      expect(await voting.hasVoted(outsider.address)).to.equal(true); // 취약: 선거 중 등록+투표 성공
-    });
-
-    it("V-B. 선거 진행 중에도 관리자 1명이 단독으로 후보를 추가할 수 있다", async function () {
-      await startRunningElection();
-      await voting.connect(owner).addCandidate("뒤늦은후보", "회장", "...");
-      expect(await voting.getCandidateCount()).to.equal(3); // 취약: 선거 중 후보 변경 가능
-    });
-
+  describe("7. [취약점 탐지] 아직 남아 있는 약점", function () {
     it("V-C. 이미 관리자인 주소를 다시 추가하면 adminCount가 부풀려진다", async function () {
       await setupTwoAdmins();                                  // adminCount = 2
       await voting.connect(owner).propose(AddAdmin, admin3.address, 0);
@@ -208,7 +321,7 @@ describe("Voting - 멀티시그 / 비상정지 / 투표 무결성", function () 
       expect(await voting.adminCount()).to.equal(1);           // 취약: 실제론 2명인데 1로 집계 → 단독 관리자 예외 재개방
     });
 
-    it("V-E. 종료된 선거에 StartElection을 다시 실행하면 hasVoted가 유지된 채 재개된다", async function () {
+    it("V-E. (결과 확정 전) 종료된 선거에 StartElection을 다시 실행하면 hasVoted가 유지된 채 재개된다", async function () {
       await startRunningElection(1);
       await voting.connect(voter1).vote(0);
       await time.increase(61);
@@ -219,19 +332,12 @@ describe("Voting - 멀티시그 / 비상정지 / 투표 무결성", function () 
       expect((await voting.candidates(0)).voteCount).to.equal(1);
     });
 
-    it("V-F. 후보가 없는 상태에서 당선자 조회는 비정상 revert 된다", async function () {
-      await setupTwoAdmins();
-      await voting.connect(owner).propose(StartElection, ZERO, 1);
-      await voting.connect(admin2).approve(1);
-      await time.increase(61);
-      await expect(voting.getWinner()).to.be.reverted;         // 취약: 의미 있는 에러 메시지 없이 실패
-    });
-
     it("V-G. 동점이면 후보 등록 순서가 앞선 후보가 자동으로 당선자가 된다", async function () {
       await startRunningElection(1);
       await voting.connect(voter1).vote(1); // B 1표
       await voting.connect(voter2).vote(0); // A 1표
       await time.increase(61);
+      await voting.finalize();
       expect(await voting.getWinner()).to.equal("A");          // 취약: 동점 처리 규칙이 없어 등록 순서(A)가 결과를 좌우
     });
   });

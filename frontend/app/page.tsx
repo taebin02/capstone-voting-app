@@ -16,6 +16,9 @@ export default function Home() {
   const [totalVoters, setTotalVoters] = useState(0);
   const [remainingTime, setRemainingTime] = useState<string>("");
   const [winner, setWinner] = useState("");
+  // [결과 확정] 컨트랙트의 finalize()로 당선자가 체인에 저장됐는지 여부
+  const [finalized, setFinalized] = useState(false);
+  const [finalizing, setFinalizing] = useState(false);
   // [멀티시그] 제안 목록과 관리자 수. 비상 관리/선거 시작 버튼이 모두
   // propose()로 바뀌었으므로, 화면에 "대기 중인 제안"을 보여줘야 함.
   const [proposals, setProposals] = useState<any[]>([]);
@@ -52,14 +55,46 @@ export default function Home() {
     } catch (e) { console.error("loadCandidates error:", e); }
   };
 
+  // [결과 확정] 당선자는 finalize()로 확정된 뒤에만 공개한다.
+  // (확정 전에는 체인의 마지막 블록 시각과 화면 시계가 어긋나 조회가 거부될 수 있기 때문)
   const loadWinner = async () => {
     if (!contract) return;
     try {
-      const winnerName = await contract.getWinner();
-      setWinner(winnerName);
+      const f = await contract.finalized();
+      setFinalized(f);
+      if (f) {
+        setWinner(await contract.getWinner());
+      } else {
+        setWinner("");
+      }
     } catch (e) {
       setWinner("");
     }
+  };
+
+  // 종료된 선거의 결과를 확정하는 거래. 관리자가 아니어도 누구나 실행할 수 있다.
+  const finalizeResult = async () => {
+    if (!contract) { alert("지갑을 먼저 연결해주세요!"); return; }
+    setFinalizing(true);
+    try {
+      const tx = await contract.finalize();
+      await tx.wait();
+      showToast("결과가 확정되었습니다");
+      await loadWinner();
+    } catch (e: any) {
+      const reason = e.reason || e.message || "";
+      if (reason.includes("Election still active")) {
+        alert("종료 시각이 아직 블록에 반영되지 않았습니다. 잠시 후 다시 시도해주세요.");
+      } else if (reason.includes("No candidates")) {
+        alert("후보가 없어 결과를 확정할 수 없습니다.");
+      } else if (reason.includes("Already finalized")) {
+        alert("이미 확정된 결과입니다.");
+        loadWinner();
+      } else {
+        alert("오류: " + reason);
+      }
+    }
+    setFinalizing(false);
   };
 
   // [멀티시그] 현재까지 올라온 제안들을 전부 불러와서,
@@ -283,25 +318,33 @@ export default function Home() {
               ))}
               {candidates.length === 0 && <p style={{ color: "#9CA3AF", textAlign: "center" }}>후보자가 없습니다</p>}
             </div>
-            {/* [결과 공개 분리] 정상 종료와 강제 종료를 구분해서 보여준다.
-                정상 종료("투표 종료")는 기존처럼 당선자를 바로 공개하지만,
-                강제 종료("강제 종료됨")는 비상 상황으로 멈춘 것이므로
-                당선자를 바로 공개하지 않고 관리자 검토 안내만 표시한다.
-                내부적으로 getWinner()는 이미 호출돼 값을 갖고 있지만,
-                화면에 노출하는 시점만 늦추는 것이다(컨트랙트는 그대로 둠). */}
-            {winner && remainingTime === "투표 종료" && (
+            {/* [결과 확정 + 결과 공개 분리]
+                정상 종료("투표 종료"): 아직 확정 전이면 '결과 확정' 버튼을, 확정 후에는 당선자를 보여준다.
+                강제 종료("강제 종료됨"): 비상 중단이므로 당선자를 공개하지 않고 관리자 검토 안내만 표시한다. */}
+            {remainingTime === "투표 종료" && !finalized && (
+              <div style={{ marginTop: 24, background: "#FFFBEB", borderRadius: 12, padding: 24, textAlign: "center", border: "1px solid #FDE68A" }}>
+                <div style={{ fontSize: 18, fontWeight: 600, color: "#92400E", marginBottom: 8 }}>투표가 종료되었습니다</div>
+                <div style={{ fontSize: 14, color: "#78350F", marginBottom: 16 }}>결과를 확정하면 당선자가 공개됩니다 (누구나 확정할 수 있습니다)</div>
+                <button onClick={finalizeResult} disabled={finalizing}
+                  style={{ background: "#7C3AED", color: "#fff", border: "none", borderRadius: 8, padding: "10px 20px", cursor: finalizing ? "not-allowed" : "pointer", fontSize: 14, fontWeight: 500 }}>
+                  {finalizing ? "처리 중..." : "결과 확정"}
+                </button>
+              </div>
+            )}
+            {winner && finalized && remainingTime === "투표 종료" && (
               <div style={{ marginTop: 24, background: "#EDE9FE", borderRadius: 12, padding: 24, textAlign: "center", border: "1px solid #DDD6FE" }}>
                 <div style={{ fontSize: 18, fontWeight: 600, color: "#5B21B6", marginBottom: 8 }}>🏆 최종 당선자</div>
                 <div style={{ fontSize: 32, fontWeight: 700, color: "#111827" }}>{winner}</div>
+                <div style={{ fontSize: 12, color: "#6B7280", marginTop: 8 }}>체인에 확정된 결과입니다</div>
               </div>
             )}
-            {winner && remainingTime === "강제 종료됨" && (
+            {remainingTime === "강제 종료됨" && (
               <div style={{ marginTop: 24, background: "#FEF2F2", borderRadius: 12, padding: 24, textAlign: "center", border: "1px solid #FECACA" }}>
                 <div style={{ fontSize: 18, fontWeight: 600, color: "#B91C1C", marginBottom: 8 }}>⚠️ 선거가 강제 종료되었습니다</div>
                 <div style={{ fontSize: 14, color: "#7F1D1D" }}>최종 결과는 관리자 검토 후 공개됩니다</div>
               </div>
             )}
-            <p style={{ fontSize: 13, color: "#9CA3AF", marginTop: 16 }}>⚠️ 투표 마감 후 최종 결과가 확정됩니다</p>
+            <p style={{ fontSize: 13, color: "#9CA3AF", marginTop: 16 }}>⚠️ 투표 마감 후 "결과 확정"을 거쳐 최종 결과가 확정됩니다</p>
           </div>
         )}
 
@@ -392,7 +435,10 @@ function AdminCandidateForm({ contract, onSuccess }: any) {
       await tx.wait();
       setName(""); setRole(""); setPledge("");
       onSuccess();
-    } catch (e: any) { alert("오류: " + (e.reason || e.message)); }
+    } catch (e: any) {
+      const reason = e.reason || e.message || "";
+      alert(reason.includes("Election already started") ? "선거가 시작된 후에는 후보를 추가할 수 없습니다." : "오류: " + reason);
+    }
   };
   return (
     <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
@@ -413,7 +459,10 @@ function AdminVoterForm({ contract, onSuccess }: any) {
       await tx.wait();
       setAddress("");
       onSuccess();
-    } catch (e: any) { alert("오류: " + (e.reason || e.message)); }
+    } catch (e: any) {
+      const reason = e.reason || e.message || "";
+      alert(reason.includes("Election already started") ? "선거가 시작된 후에는 유권자를 등록할 수 없습니다." : "오류: " + reason);
+    }
   };
   return (
     <div style={{ display: "flex", gap: 8 }}>

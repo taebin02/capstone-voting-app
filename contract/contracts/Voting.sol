@@ -16,12 +16,23 @@ contract Voting {
     uint public voterCount;
     bool public paused;
 
+    // ============================================
+    // [7주차 보완 - 타임스탬프 문제] 결과 확정 상태
+    // 컨트랙트가 보는 '지금 시각'은 마지막 블록의 시각이라, 거래가 없는 동안
+    // 화면(현실 시계)과 어긋난다. 그래서 종료 후 당선자를 '조회할 때마다 계산'하지 않고,
+    // finalize() 거래로 한 번 계산해 체인에 저장(확정)한다.
+    // 거래는 자기 블록의 시각으로 검증되므로 시계 불일치가 생기지 않는다.
+    // ============================================
+    bool public finalized;
+    string public finalizedWinner;
+
     Candidate[] public candidates;
     mapping(address => bool) public hasVoted;
     mapping(address => bool) public registeredVoters;
 
     event EmergencyStopped(address indexed by, uint timestamp);
     event Resumed(address indexed by, uint timestamp);
+    event ResultFinalized(address indexed by, string winner, uint timestamp);
 
     enum ActionType { AddAdmin, RemoveAdmin, EmergencyStop, Resume, StartElection }
 
@@ -62,6 +73,19 @@ contract Voting {
 
     modifier notPaused() {
         require(!paused, "Election is paused");
+        _;
+    }
+
+    // ============================================
+    // [7주차 보완 - V-A, V-B] 선거 시작 후 등록 차단
+    // 6주차 테스트에서, 선거 진행 중에도 관리자 1명이 단독으로
+    // 유권자를 추가 등록해 투표하거나 후보를 추가할 수 있음을 확인했다.
+    // endTime은 선거가 시작될 때만 0이 아닌 값으로 바뀌므로,
+    // endTime != 0 이면 "선거가 한 번이라도 시작됨"으로 보고 영구 차단한다.
+    // (정지 상태, 종료 후에도 차단 — 이 컨트랙트는 선거 1회용으로 운영)
+    // ============================================
+    modifier beforeElection() {
+        require(endTime == 0, "Election already started");
         _;
     }
 
@@ -127,6 +151,7 @@ contract Voting {
             electionActive = true;
             emit Resumed(msg.sender, block.timestamp);
         } else if (p.action == ActionType.StartElection) {
+            require(!finalized, "Election already finalized");
             electionActive = true;
             endTime = block.timestamp + (p.durationMinutes * 1 minutes);
         }
@@ -138,14 +163,14 @@ contract Voting {
         return proposals.length;
     }
 
-    function registerVoter(address voter) public onlyAdmin {
+    function registerVoter(address voter) public onlyAdmin beforeElection {
         if (!registeredVoters[voter]) {
             registeredVoters[voter] = true;
             voterCount++;
         }
     }
 
-    function addCandidate(string memory name, string memory role, string memory pledge) public onlyAdmin {
+    function addCandidate(string memory name, string memory role, string memory pledge) public onlyAdmin beforeElection {
         candidates.push(Candidate(name, role, pledge, 0));
     }
 
@@ -163,8 +188,36 @@ contract Voting {
         return candidates.length;
     }
 
+    // ============================================
+    // [7주차 보완 - 타임스탬프 문제] 결과 확정
+    // 선거가 자연 종료된 뒤 누구나 호출할 수 있고, 한 번만 실행된다.
+    // - notPaused: 비상 정지 중에는 확정 불가 (정지 해제 후 확정)
+    // - endTime != 0: 선거가 시작된 적 있어야 함
+    // - block.timestamp > endTime: 이 거래가 담긴 블록 기준으로 종료 여부 판단
+    // - candidates.length > 0: 후보가 없으면 의미 있는 메시지로 거부 (V-F 방어)
+    // ============================================
+    function finalize() public notPaused {
+        require(!finalized, "Already finalized");
+        require(endTime != 0, "Election not started");
+        require(block.timestamp > endTime, "Election still active");
+        require(candidates.length > 0, "No candidates");
+        finalizedWinner = _computeWinner();
+        finalized = true;
+        emit ResultFinalized(msg.sender, finalizedWinner, block.timestamp);
+    }
+
+    // 당선자 조회
+    // - 확정된 뒤: 저장된 값을 그대로 반환 (시간·블록과 무관)
+    // - 확정 전: 비상 정지 상태일 때만 현재까지의 집계를 반환 (화면은 이를 공개하지 않음),
+    //            그 외에는 거부
     function getWinner() public view returns (string memory) {
-        require(block.timestamp > endTime || paused, "Election still active");
+        if (finalized) return finalizedWinner;
+        require(paused, "Result not finalized");
+        require(candidates.length > 0, "No candidates");
+        return _computeWinner();
+    }
+
+    function _computeWinner() internal view returns (string memory) {
         uint maxVotes = 0;
         uint winnerIndex = 0;
         for (uint i = 0; i < candidates.length; i++) {
