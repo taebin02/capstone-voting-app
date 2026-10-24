@@ -1,8 +1,9 @@
 # 블록체인 기반 전자투표시스템 — 진행 현황 및 인수인계 문서
 
-> 기준일: 2026-10-20 (7주차 종료 시점)
+> 기준일: 2026-10-24 (8주차 구현·자동 검증 및 보고서 초안 정리)
 > 작성 목적: ① 7주차까지 무엇을 했는지 보고할 수 있게 정리, ② 8주차를 이어서 할 때 환경·결정사항·주의점을 빠뜨리지 않기 위함, ③ 최종 취약점진단보고서에 쓸 증거를 항목별로 관리
 > 이 문서는 사실만 적었고, **확정이 아닌 것은 "후보" 또는 "미결정"으로 표시**했습니다.
+> 8주차 최신 기록은 14장에 있습니다. 실제 브라우저·MetaMask 시연, 제출 문서의 Word 레이아웃 확인, 보고서 제출·발표 완료 여부는 별도입니다.
 
 ---
 
@@ -14,11 +15,11 @@
 | 최종 결과물 | ① 취약점진단보고서 ② 보안 개선을 반영한 업그레이드 투표 시스템 |
 | 진단 기준 | OWASP Smart Contract Top 10 (2026) + STRIDE |
 | 저장소 | `taebin02/capstone-voting-app` (main) — `contract/` + `frontend/` 통합 |
-| 최신 커밋 | `0fcd6ff` (2026-10-20) 7주차: 등록 차단, 결과 확정 finalize, 테스트 36개 |
-| 구현 완료 | 비상 정지, 멀티시그(제안→승인→실행), 선거 시작 후 등록 차단, 결과 확정(finalize), 관련 화면 |
-| 자동 테스트 | 36개 전부 통과 (본인 PC에서 확인) |
-| 취약점 현황 | 총 15건 — 해결 6 · 부분 해결 3 · 예정 6 |
-| 다음(8주차) | 이벤트 로깅 확대 + 3차 발표 (15주 계획 기준, 확정 아님) |
+| 커밋 기준 | 8주차 Before: `5d29146` (7주차 문서 정리). 이후 이 문서와 코드의 이력은 `git log -1`로 확인 |
+| 구현 완료 | 기존 보완 + 이벤트 12종, 감사 로그 조회, 격리 시연 스크립트 |
+| 자동 테스트 | 47개 통과 (현재 Windows 작업 폴더에서 도구로 실행, 로그 저장). 이 중 5개는 취약점 재현 |
+| 취약점 현황 | 총 15건 — 해결 7 · 부분 해결 2 · 예정 6 (No.5 현재 관리 함수의 로깅 범위 해결) |
+| 다음 | 3차 발표·문서 제출 확인, 9~10주차 V-C/V-D/V-E/V-G/No.15 보완 |
 
 ---
 
@@ -43,7 +44,9 @@ capstone-voting/                  ← 바탕화면의 작업 폴더 (VS Code로 
 │  ├─ contracts/Voting.sol        ★ 본 컨트랙트
 │  ├─ contracts/Lock.sol          하드햇 샘플 (무시)
 │  ├─ scripts/deploy.js           배포 스크립트
-│  ├─ test/Voting.test.js         ★ 자동 테스트 36개
+│  ├─ scripts/auditLog.js         ★ 이벤트 감사 로그 조회
+│  ├─ scripts/demoScenario.js     ★ 메모리 체인 격리 시연
+│  ├─ test/Voting.test.js         ★ 자동 테스트 47개
 │  ├─ test/Lock.js                하드햇 샘플 (무시)
 │  └─ hardhat.config.js           solidity 0.8.24
 └─ frontend/                      Next.js 화면
@@ -141,9 +144,11 @@ Copy-Item -Path "C:\Users\USER\Desktop\capstone-voting\contract\artifacts\contra
 ### 투표
 - `vote(index)`: `notPaused` + 선거 진행 중 + `block.timestamp <= endTime` + 등록 유권자 + 미투표 + 유효 후보
 
-### 이벤트 (6종)
+### 이벤트 (12종, 8주차 갱신)
 `EmergencyStopped`, `Resumed`, `ProposalCreated`, `ProposalApproved`, `ProposalExecuted`, `ResultFinalized`
-(`registerVoter`, `addCandidate`, `vote`에는 이벤트 없음 → 8주차 로깅 확대 대상)
+및 `VoterRegistered`, `CandidateAdded`, `Voted`, `AdminAdded`, `AdminRemoved`, `ElectionStarted`.
+`Voted`는 투표자 주소와 시각만 기록한다. 후보 번호는 이벤트에서 제외했으나 거래 입력·공개 상태를 통한 선택 추론은 가능하므로 익명성 보장이 아니다(No.6 잔존).
+관리자 변경·선거 시작은 기존 제안 로그로도 간접 추적할 수 있었으며, 8주차에는 실제 반영값을 전용 이벤트로 추가했다.
 
 ### 코드 검토로 본 추가 소견 (**자동 테스트로는 아직 검증 안 함**)
 - 제안에 **만료·취소 기능이 없다** → 오래된 제안이 나중에 승인되면 그대로 실행될 수 있음.
@@ -166,8 +171,9 @@ Copy-Item -Path "C:\Users\USER\Desktop\capstone-voting\contract\artifacts\contra
 
 ## 6. 자동 테스트 (`contract/test/Voting.test.js`)
 
-실행: `cd contract` → `npx hardhat test test/Voting.test.js` → 마지막에 **`36 passing`**.
+실행: `cd contract` → `npx.cmd hardhat test test/Voting.test.js` → 마지막에 **`47 passing`**.
 (하드햇 내장 가상 네트워크에서 돌아가므로 노드 터미널이 필요 없다.)
+PowerShell 실행 정책으로 `npx.ps1`이 차단되면 `npx.cmd`를 사용한다. 실행 정책 자체를 변경할 필요는 없다.
 
 | 묶음 | 개수 | 내용 |
 |---|---|---|
@@ -177,10 +183,12 @@ Copy-Item -Path "C:\Users\USER\Desktop\capstone-voting\contract\artifacts\contra
 | 4. 투표 무결성 | 5 | 미등록·중복·없는 후보 차단, 종료 후 투표 차단·확정 후 당선자 조회, 진행 중 조회 차단 |
 | 5. 7주차 보완 검증(등록 차단) | 5 | V-A, V-B 방어, 정지 중·종료 후에도 차단, 시작 전 정상 등록 |
 | 6. 7주차 보완 검증(finalize) | 9 | 진행 중·미시작·정지 중 거부, 비관리자 확정, 1회 제한, 값 불변, 이벤트, 확정 후 재시작 불가, V-F 방어 |
-| 7. 취약점 탐지 | 4 | V-C, V-D, V-E(확정 전), V-G — **취약한 동작을 일부러 재현하는 테스트라, 통과 = 취약점 존재 확인** |
+| 7. 8주차 이벤트 검증 | 8 | 기존·신규 이벤트 인자, 실행 결과, 중복 등록 시 이벤트 없음, 투표 이벤트 정보 최소화 |
+| 8. 8주차 멀티시그 증거 보강 | 2 | RemoveAdmin 승인 2명, 최초 관리자 없이 나머지 2명으로 비상 정지 |
+| 9. 취약점 탐지 | 5 | V-C, V-D, V-E(확정 전), V-G, No.15 — **통과 = 취약점 존재 확인** |
 
 ### ⚠ 8주차 이후에 기억할 것
-- 7번 묶음은 "취약하다"를 기대값으로 적어둔 테스트다. **V-C, V-D, V-E, V-G를 고치면 해당 테스트는 실패하는 게 정상**이다. → 고친 뒤에는 "막혀야 한다(revert 기대)"로 **뒤집어서 5·6번 같은 보완 검증 묶음으로 옮긴다**(7주차에 V-A, V-B, V-F를 그렇게 처리함).
+- 9번 묶음은 "취약하다"를 기대값으로 적어둔 테스트다. **V-C, V-D, V-E, V-G, No.15를 고치면 해당 테스트는 실패하는 게 정상**이다. → 고친 뒤에는 적절한 거부 또는 새 정책의 정상 결과를 기대하는 **방어 테스트로 전환**한다(동점 처리 등은 무조건 revert가 정답인 것은 아님).
 - **Before 증거는 커밋으로 남아 있다**: 6주차 커밋 `da70115`의 테스트(25개)가 V-A~V-G를 "취약함"으로 확인한 기록이다.
 
 ---
@@ -195,7 +203,7 @@ Copy-Item -Path "C:\Users\USER\Desktop\capstone-voting\contract\artifacts\contra
 | 2 | 타이머와 `block.timestamp` 오차로 당선자 조회 거부 (원인: 체인 시계는 블록이 생겨야 갱신) | SC03 Logic | Medium | **해결됨** (7주차 finalize) |
 | 3 | 최초 admin 삭제 불가 → 키 분실 시 마비(SPOF) | SC01 | High | 부분 해결(관리자 3명 이상 운영 시 대응 가능) |
 | 4 | 관리자 간 동등 권한 → 상호 강퇴 | SC01 | High | 해결됨(멀티시그) |
-| 5 | 관리 행위 이벤트 로깅 부재 | 로깅 | Medium | 부분 해결(이벤트 6종, 등록·투표 로깅은 8주차) |
+| 5 | 관리 행위 이벤트 로깅 부재 | 로깅 | Medium | **해결됨**(8주차: 이벤트 12종, 현재 관리 함수·투표 기록 및 검증 범위) |
 | 6 | `hasVoted` 공개 → 익명성 침해 | 프라이버시 | Low | 예정(11주차, 선택) |
 | 7 | 개인키 유출 시 신원 도용 | SC01(인접) | Medium | 문서화 예정 |
 | 8 V-A | 선거 중 관리자 1명이 유권자를 추가 등록하고 그 주소로 투표 | SC01 | **High** | **해결됨** (7주차) |
@@ -215,9 +223,9 @@ Copy-Item -Path "C:\Users\USER\Desktop\capstone-voting\contract\artifacts\contra
 |---|---|---|---|---|---|
 | 1 | 2주차 수동 점검, STRIDE(DoS) | 옛 소스 커밋 `17fbc7a`: `emergencyStop` 0개 | 4주차 `paused`/`emergencyStop`/`resume` → 5주차 멀티시그로 통합 | 테스트 3번 묶음 4개, 5주차 화면 캡처 | Before 화면 증거 없음(코드로 대체) |
 | 2 | 2주차 수동 관찰 → 7주차 실험 재현 | 7주차 재현 표(마지막 블록 종료 약 60초 전, 화면 시계 종료 3초 후, `getWinner` 거부) | `finalize()` | 테스트 6번 묶음 9개, 실험(거래 없이 대기 후 `finalize` 성공), 화면 캡처 3장 | 재현 수치는 Claude 작업 환경에서 잰 값. 사용자 PC 재현은 안 함 |
-| 3 | STRIDE(DoS) + 코드 검토(`removeAdmin`의 `target != admin`) | `17fbc7a` 소스 | 멀티시그(부분) | "최초 관리자 제거 불가" 테스트 | **관리자 3명 중 1명 키 분실 시 나머지 2명이 실행되는 테스트 없음 → 추가 필요** |
-| 4 | STRIDE(EoP) + 코드 검토 | `17fbc7a`의 `addAdmin`/`removeAdmin` 단독 실행 | 멀티시그 | 멀티시그 테스트 5개, 5주차 화면(승인 1/2 대기) | **`RemoveAdmin` 자체가 2명 승인을 요구하는지 직접 테스트 없음 → 추가 권장** |
-| 5 | STRIDE(Tampering/Repudiation) + ABI 분석 | `17fbc7a` 이벤트 0개 | 이벤트 6종 추가 | `ResultFinalized`만 테스트로 검증 | **나머지 5종 기록 테스트 + 등록·투표 이벤트는 8주차** |
+| 3 | STRIDE(DoS) + 코드 검토(`removeAdmin`의 `target != admin`) | `17fbc7a` 소스 | 멀티시그(부분) | 8번 묶음: 최초 관리자 없이 다른 2명의 비상 정지 성공 | 2명 운영 시 키 분실 위험·최초 관리자 제거 불가는 잔존 |
+| 4 | STRIDE(EoP) + 코드 검토 | `17fbc7a`의 `addAdmin`/`removeAdmin` 단독 실행 | 멀티시그 | 8번 묶음: RemoveAdmin 1/2 대기, 2/2 실행 | 승인자 공모에 대한 방어와는 구분 |
+| 5 | STRIDE(Tampering/Repudiation) + ABI 분석 | 최초 `17fbc7a` 이벤트 0개, 8주차 직전 `5d29146` 이벤트 6종 | 12종으로 확대, 감사 로그 조회 | 7번 8개 + 기존 확정 이벤트 테스트, 격리 시연 12종·35건 | 현재 관리 함수 범위. 시연은 가상 시각 사용 |
 | 6 | STRIDE(Info Disclosure) 코드 검토 | `hasVoted` public. 참고: `vote(index)`의 호출 데이터는 체인에 공개되므로 완전한 익명성은 구조적으로 불가(commit-reveal 등 필요) | 미조치 | — | **최종본 처리 방침 결정 필요**(진단·판단만 / 11주차 구현) |
 | 7 | STRIDE(Spoofing) | `msg.sender` 단일 판별 | 미조치 | — | **방침 결정 필요**(키 관리 가이드 문서화) |
 | 8 V-A | 6주차 자동 테스트로 탐지 | 6주차 `25 passing` 캡처, 커밋 `da70115` | `beforeElection` | 7주차 방어 테스트, 화면 캡처(유권자 등록 거부), `36 passing` 캡처 | 충분 |
@@ -227,7 +235,7 @@ Copy-Item -Path "C:\Users\USER\Desktop\capstone-voting\contract\artifacts\contra
 | 12 V-E | 6주차 자동 테스트로 탐지 | 위와 동일 | 확정 후 재시작 차단(부분) | 6번 묶음 "확정된 뒤에는 재시작 불가" | 확정 전 재시작이 남음 |
 | 13 V-F | 6주차 자동 테스트로 탐지 | 위와 동일 | `finalize` 후보 필수 | V-F 방어 테스트 | 충분 |
 | 14 V-G | 6주차 자동 테스트로 탐지 | 위와 동일 | 예정 | — | 9~10주차 |
-| 15 | 7주차 코드 검토 | 3번 묶음 "정지 상태에서 `getWinner()`는 조회 가능" 테스트가 동작을 보여줌 | 예정 | — | 노출을 명시적으로 확인하는 탐지 테스트 추가 |
+| 15 | 7주차 코드 검토, 8주차 외부 계정으로 재현 | 9번 묶음: outsider가 미확정·정지 중 선두 B 조회 | 예정 | 아직 방어하지 않음 | 탐지 근거는 확보, 9~10주차 보완. 공개 득표 등 다른 노출 경로는 별도 |
 
 ---
 
@@ -241,12 +249,13 @@ Copy-Item -Path "C:\Users\USER\Desktop\capstone-voting\contract\artifacts\contra
 | 5 | **멀티시그 설계 보고서 제출(설계 기준)**. 실제로는 구현·화면 연동·수동 테스트까지 선행 | `5주차_추진내용.docx`(제출본) |
 | 6 | 멀티시그 구현·테스트 보고, 자동 테스트 25개, 취약점 7건 추가 | `week6_report.docx`, `vulnerability_report_week6.docx` |
 | 7 | 선거 시작 후 등록 차단, 타임스탬프 원인 규명, 결과 확정(finalize) 도입, 테스트 36개 | `week7_report.docx`, `vulnerability_report_week7.docx` |
+| 8 | 이벤트 12종, 테스트 47개, 멀티시그 증거·No.15 탐지 보강, 감사 로그·격리 시연 | `docs/reports/week8_report.docx`, `docs/reports/vulnerability_report_week8.docx`, `docs/reports/week8_presentation_notes.docx` (제출 전 레이아웃 확인 필요) |
 
 ### 정리해 둘 점
 - **5주차 보고서는 "설계만"으로 제출**했고, 구현·테스트 내용은 **6주차 보고서에 반영**하기로 했다(사용자 결정). 커밋 `24f8ab4`(10/06)의 메시지는 "5주차 멀티시그 구조 구현 및 테스트"다. 질문을 받으면 "5주차에 설계한 것을 앞당겨 구현했다"고 설명하면 된다.
 - 5주차 보고서에서 미확정이던 항목은 6주차에 **필요 승인 2명, startElection 포함**으로 확정했다.
 - **4주차 보고서 v1에는 통합 레포 이름이 `blockchain-voting-app`으로 잘못 적혀 있었다**(실제는 `capstone-voting-app`). v2에서 수정됨. v1을 제출했다면 알고 있어야 한다.
-- 옛 파일(`3주차_추진내용.docx`, `vulnerability_report.docx`, `vulnerability_report_week6.docx`)은 **폐기/대체**했다. 최신 진단 표는 `vulnerability_report_week7.docx`.
+- 옛 파일(`3주차_추진내용.docx`, `vulnerability_report.docx`, `vulnerability_report_week6.docx`)은 **폐기/대체**했다. 최신 진단 표 초안은 `docs/reports/vulnerability_report_week8.docx`이며, 7주차 제출 기록은 보존한다.
 - **7주차 보고서의 타임스탬프 재현 수치**(화면 +3초, 마지막 블록 −60초)는 Claude 작업 환경에서 측정한 값이다. 사용자 PC 화면에서 같은 수치를 본 것은 아니므로 "원리를 실험으로 확인했다"로 설명한다.
 
 ### 커밋 이력
@@ -273,7 +282,9 @@ Copy-Item -Path "C:\Users\USER\Desktop\capstone-voting\contract\artifacts\contra
 
 ---
 
-## 10. 8주차 계획과 시작 체크리스트
+## 10. 8주차 시작 당시 계획과 체크리스트 (과거 기록)
+
+아래는 7주차 종료 시 세운 계획이다. **현재 실행 기준은 14장과 6장(47 passing)**을 사용한다.
 
 ### 시작 전 5분 점검
 1. 터미널 ①(노드) → ②(컴파일·배포·ABI 복사) → ③(화면) 순서로 켠다 (3장).
@@ -326,9 +337,9 @@ git show da70115:contract/test/Voting.test.js      # 6주차 테스트 (V-A~V-G�
 
 붙여넣을 문장:
 
-> capstone-voting-app 레포(https://github.com/taebin02/capstone-voting-app) 최신 상태 확인하고 8주차 이어서 진행하자. 레포 루트의 PROJECT_STATUS.md를 먼저 읽어줘. 진단 기준은 OWASP Smart Contract Top 10 + STRIDE, 최종 결과물은 취약점진단보고서(어떻게 진단해서 고쳤는지)와 업그레이드한 투표시스템이야.
+> capstone-voting-app 작업 폴더의 PROJECT_STATUS.md와 git status를 먼저 확인해줘. 8주차 구현·자동 검증은 마쳤고 47 passing 중 5개는 취약점 재현이야. 14장의 미완료 확인 사항부터 점검하고 9~10주차를 이어가자. 최종 결과물은 진단→근거→조치→검증이 이어지는 취약점진단보고서와 개선된 투표시스템이야.
 
-**제가 볼 수 있는 건 깃허브에 올라간 것뿐이다.** 작업이 끝나면 항상 push한다.
+옛 Claude 환경은 GitHub에 올라간 것만 볼 수 있었다. 현재 Codex는 로컬 작업 폴더를 읽을 수 있으므로 **미커밋 변경을 먼저 확인**한다. 원격 반영 여부는 `git status -sb`와 `git log`로 확인하며 성공하지 않은 push를 완료로 적지 않는다.
 
 ### Claude 작업 메모 (다음 대화에서 환경을 빨리 세팅하기 위함)
 - 작업 서버에서는 솔리디티 컴파일러 다운로드가 막혀 있다. 테스트는 `npm install --no-save solc@0.8.24` 후 임시 `hardhat.sandbox.config.js`(`TASK_COMPILE_SOLIDITY_GET_SOLC_BUILD`를 오버라이드해 `solc/soljson.js` 사용, mocha timeout 크게)로 실행하고, **그 파일은 커밋하지 않는다**.
@@ -341,5 +352,47 @@ git show da70115:contract/test/Voting.test.js      # 6주차 테스트 (V-A~V-G�
 
 - 4주차 보고서로 v1과 v2 중 무엇을 제출했는지.
 - 7주차 보고서 제출 여부, 수정 요청이 있었는지.
-- 8주차 계획(이벤트 로깅, 증거 보강, 3차 발표)을 그대로 갈지.
+- 8주차 보고서 제출 여부와 발표 시간·형식. 구현·자동 검증·발표 메모 초안은 완료했으나 제출·발표 완료는 확인하지 않음.
 - 진단 No.6(익명성), No.7(개인키)을 최종본에서 "진단·판단만"으로 둘지, 구현할지.
+
+---
+
+## 14. 8주차(2026-10-24) 작업 기록 및 다음 출발점
+
+### 완료한 작업과 확인 결과
+- 기존 미커밋 로깅 변경을 검토하고 현재 관리 함수의 이벤트 범위를 정리했다. 기존 6종에 신규 6종을 더해 총 12종이다.
+- `Voted(voter, timestamp)`로 기록한다. 이벤트에 후보를 넣지 않는 정보 최소화 정책이며, 거래 입력·공개 상태의 노출을 해결한 것은 아니다(No.6 유지).
+- 테스트 47개 통과: 기존 36 + 이벤트 8 + 멀티시그 증거 2 + No.15 탐지 1. 전체 중 5개는 취약점 존재를 기대한다.
+- No.3은 3명 중 최초 관리자 없이 2명 승인으로 비상 정지할 수 있음을 검증했다. 부분 해결 상태 유지.
+- No.4는 관리자 제거도 1/2 대기·2/2 실행임을 검증했다.
+- No.15는 outsider가 미확정·정지 중 B를 조회할 수 있음을 검증했다. 미해결 상태 유지.
+- `auditLog.js`: 이벤트를 시간순으로 출력하고 거래 해시·로그 순번으로 증거를 대조할 수 있게 했다. 시각은 UTC다.
+- ZIP의 시연 흐름을 참고해 `demoScenario.js`를 작성했다. 기존 localhost 선거 대신 기본 Hardhat 메모리 체인에서 새로 배포한다. 관리자 추가·제거까지 포함해 **12종 이벤트 총 35건**, 당선자 B를 확인했다.
+- 시연의 종료는 가상 시각 이동으로 처리했다. 실제 시간 대기 실험과 구분한다.
+- `frontend/lib/Voting.json` 동기화, `npx.cmd tsc --noEmit` 종료 코드 0 확인. ABI 변경 이후 기존 localhost 컨트랙트 재배포와 브라우저·MetaMask 검증은 별도다.
+- No.5를 현재 관리 함수의 이벤트 기록·검증 범위에서 해결로 갱신했다. 총 15건: 해결 7 / 부분 해결 2 / 예정 6.
+
+### 저장한 산출물
+- `docs/evidence/week8/tests.txt`: 현재 Windows PC 작업 폴더에서 Codex 도구로 실행한 47 passing 원문.
+- `docs/evidence/week8/demo-audit-log.txt`: 격리 시연 및 35건 감사 로그 원문(가상 시각 사용).
+- `docs/evidence/week8/verification.json`: 실행 환경, 검증 결과, 파일 해시.
+- `docs/reports/week8_report.docx`: 8주차 추진내용 초안.
+- `docs/reports/vulnerability_report_week8.docx`: 15건 최신 현황표 초안.
+- `docs/reports/week8_presentation_notes.docx`: 3차 발표 대본·시연·예상 질문 초안.
+- 문서 재생성: `python docs/reports/generate_week8_reports.py` (추가 패키지 불필요).
+
+### 재실행 방법 (노드·MetaMask 없이 검증)
+```powershell
+cd C:\Users\USER\Desktop\capstone-voting\contract
+npx.cmd hardhat test test/Voting.test.js
+npx.cmd hardhat run scripts/demoScenario.js
+```
+격리 시연의 체인은 실행 종료 시 사라진다. 출력 증거는 저장한 텍스트를 사용한다.
+이미 배포한 localhost 체인을 읽기만 하려면 `npx.cmd hardhat run scripts/auditLog.js --network localhost`를 사용한다.
+주소가 기본값과 다르면 먼저 `$env:CONTRACT_ADDRESS="배포주소"`를 지정한다.
+
+### 미완료 확인 사항과 다음 작업
+1. DOCX는 패키지/XML 구조를 검증했다. **Word에서 페이지·표 레이아웃을 확인하고 PDF로 확인하는 작업은 아직 하지 않았다.**
+2. 실제 화면·MetaMask 시연, 캡처 저장, 8주차 보고서 제출·3차 발표 완료 여부는 사용자가 확인해야 한다.
+3. 9~10주차: V-C·V-D 인원 계산 → V-E 선거 재시작 → V-G 동점 정책 → No.15 정지 중 조회를 보완하고 탐지 테스트를 방어 테스트로 전환한다.
+4. No.6·7의 구현 또는 문서화 범위는 미결정이다.

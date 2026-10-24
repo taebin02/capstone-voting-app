@@ -300,11 +300,112 @@ describe("Voting - 멀티시그 / 비상정지 / 투표 무결성", function () 
   });
 
   // ------------------------------------------------------------------
+  // 8주차 보완 검증: 진단 No.5(관리 행위 로깅 부재). 7주차까지는 제안·승인·실행·정지·재개·확정만
+  // 기록됐고, 유권자 등록·후보 추가·투표·관리자 변경·선거 시작은 기록이 없었다.
+  // ------------------------------------------------------------------
+  describe("7. [8주차 보완 검증] 이벤트 로깅 (진단 No.5)", function () {
+    it("제안하면 ProposalCreated와 제안자의 ProposalApproved(1표)가 기록된다", async function () {
+      await setupTwoAdmins();
+      const id = await voting.getProposalCount();
+      const tx = voting.connect(owner).propose(StartElection, ZERO, 60);
+      await expect(tx).to.emit(voting, "ProposalCreated").withArgs(id, StartElection, owner.address);
+      await expect(tx).to.emit(voting, "ProposalApproved").withArgs(id, owner.address, 1);
+    });
+
+    it("두 번째 승인으로 실행되면 ProposalApproved(2표), ProposalExecuted, ElectionStarted가 기록된다", async function () {
+      await setupTwoAdmins();
+      const id = await voting.getProposalCount();
+      await voting.connect(owner).propose(StartElection, ZERO, 60);
+      const tx = voting.connect(admin2).approve(id);
+      await expect(tx).to.emit(voting, "ProposalApproved").withArgs(id, admin2.address, 2);
+      await expect(tx).to.emit(voting, "ProposalExecuted").withArgs(id, StartElection);
+      await expect(tx).to.emit(voting, "ElectionStarted").withArgs(await voting.endTime(), id);
+    });
+
+    it("관리자 추가·제거가 AdminAdded / AdminRemoved로 기록된다", async function () {
+      await expect(voting.connect(owner).propose(AddAdmin, admin2.address, 0)) // id 0 (부트스트랩 즉시 반영)
+        .to.emit(voting, "AdminAdded").withArgs(admin2.address, 0);
+      await voting.connect(owner).propose(AddAdmin, admin3.address, 0);        // id 1
+      await expect(voting.connect(admin2).approve(1))
+        .to.emit(voting, "AdminAdded").withArgs(admin3.address, 1);
+      await voting.connect(owner).propose(RemoveAdmin, admin3.address, 0);     // id 2
+      await expect(voting.connect(admin2).approve(2))
+        .to.emit(voting, "AdminRemoved").withArgs(admin3.address, 2);
+    });
+
+    it("강제 종료·재개가 EmergencyStopped / Resumed로 기록된다 (by = 실행을 완료한 승인자)", async function () {
+      await startRunningElection();
+      let id = await voting.getProposalCount();
+      await voting.connect(owner).propose(EmergencyStop, ZERO, 0);
+      await expect(voting.connect(admin2).approve(id))
+        .to.emit(voting, "EmergencyStopped").withArgs(admin2.address, anyValue);
+      id = await voting.getProposalCount();
+      await voting.connect(owner).propose(Resume, ZERO, 0);
+      await expect(voting.connect(admin2).approve(id))
+        .to.emit(voting, "Resumed").withArgs(admin2.address, anyValue);
+    });
+
+    it("유권자 등록이 VoterRegistered로 기록되고, 이미 등록된 주소는 다시 기록되지 않는다", async function () {
+      await expect(voting.connect(owner).registerVoter(voter1.address))
+        .to.emit(voting, "VoterRegistered").withArgs(owner.address, voter1.address, anyValue);
+      await expect(voting.connect(owner).registerVoter(voter1.address))
+        .to.not.emit(voting, "VoterRegistered");
+    });
+
+    it("후보 추가가 CandidateAdded로 기록된다", async function () {
+      await expect(voting.connect(owner).addCandidate("A", "회장", "공약A"))
+        .to.emit(voting, "CandidateAdded").withArgs(owner.address, 0, "A");
+    });
+
+    it("투표가 Voted(투표자, 시각)로 기록된다", async function () {
+      await startRunningElection();
+      await expect(voting.connect(voter1).vote(1))
+        .to.emit(voting, "Voted").withArgs(voter1.address, anyValue);
+    });
+
+    it("Voted 이벤트에는 후보 정보가 없다 (거래 입력 공개와 별개로 이벤트의 정보 최소화)", async function () {
+      const fragment = voting.interface.getEvent("Voted");
+      expect(fragment.inputs.map(i => i.name)).to.deep.equal(["voter", "timestamp"]);
+    });
+  });
+
+  // ------------------------------------------------------------------
+  // 8주차 증거 보강: 7주차까지 "해결/부분 해결"로 적었지만 직접 확인하는 테스트가 없던 항목
+  // ------------------------------------------------------------------
+  describe("8. [8주차 증거 보강] 멀티시그 (진단 No.3, No.4)", function () {
+    async function setupThreeAdmins() {
+      await voting.connect(owner).propose(AddAdmin, admin2.address, 0); // id 0 (부트스트랩)
+      await voting.connect(owner).propose(AddAdmin, admin3.address, 0); // id 1
+      await voting.connect(admin2).approve(1);
+    }
+
+    it("No.4. 관리자 제거도 2명 승인이 있어야 실행된다 (1명 제안만으로는 제거되지 않음)", async function () {
+      await setupThreeAdmins();
+      const id = await voting.getProposalCount();
+      await voting.connect(owner).propose(RemoveAdmin, admin3.address, 0);
+      expect(await voting.admins(admin3.address)).to.equal(true);   // 1/2: 아직 관리자
+      await voting.connect(admin2).approve(id);
+      expect(await voting.admins(admin3.address)).to.equal(false);  // 2/2: 제거됨
+    });
+
+    it("No.3. 관리자 3명이면 최초 관리자 없이 나머지 2명의 승인만으로 비상 정지를 실행할 수 있다", async function () {
+      await startRunningElection();                                  // owner + admin2로 선거 시작
+      const addId = await voting.getProposalCount();
+      await voting.connect(owner).propose(AddAdmin, admin3.address, 0);
+      await voting.connect(admin2).approve(addId);                   // 관리자 3명이 됨
+      const stopId = await voting.getProposalCount();
+      await voting.connect(admin2).propose(EmergencyStop, ZERO, 0);  // owner(최초 관리자)는 관여하지 않음
+      await voting.connect(admin3).approve(stopId);
+      expect(await voting.paused()).to.equal(true);
+    });
+  });
+
+  // ------------------------------------------------------------------
   // 아래는 "취약점 탐지" 테스트: 현재 컨트랙트가 아직 방어하지 못하는 동작을
   // 일부러 재현해서 취약점진단보고서의 근거로 쓰기 위한 것.
   // (현재 상태에서는 '취약하다'는 사실을 통과로 기록한다)
   // ------------------------------------------------------------------
-  describe("7. [취약점 탐지] 아직 남아 있는 약점", function () {
+  describe("9. [취약점 탐지] 아직 남아 있는 약점", function () {
     it("V-C. 이미 관리자인 주소를 다시 추가하면 adminCount가 부풀려진다", async function () {
       await setupTwoAdmins();                                  // adminCount = 2
       await voting.connect(owner).propose(AddAdmin, admin3.address, 0);
@@ -339,6 +440,16 @@ describe("Voting - 멀티시그 / 비상정지 / 투표 무결성", function () 
       await time.increase(61);
       await voting.finalize();
       expect(await voting.getWinner()).to.equal("A");          // 취약: 동점 처리 규칙이 없어 등록 순서(A)가 결과를 좌우
+    });
+
+    it("No.15. 비상 정지 중에는 확정 전인데도 아무나 현재 집계의 선두 후보를 조회할 수 있다", async function () {
+      await startRunningElection();
+      await voting.connect(voter1).vote(1);
+      const id = await voting.getProposalCount();
+      await voting.connect(owner).propose(EmergencyStop, ZERO, 0);
+      await voting.connect(admin2).approve(id);
+      expect(await voting.finalized()).to.equal(false);
+      expect(await voting.connect(outsider).getWinner()).to.equal("B"); // 취약: 확정 전·정지 중인데 집계가 노출됨 (화면에서만 숨김)
     });
   });
 });

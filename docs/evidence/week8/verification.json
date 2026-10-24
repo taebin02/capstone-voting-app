@@ -1,0 +1,44 @@
+﻿{
+    "date":  "2026-10-24",
+    "timezone":  "Asia/Seoul",
+    "environment":  "Current Windows workspace via Codex tools",
+    "node":  "v24.16.0",
+    "solidity":  "0.8.24",
+    "before_commit":  "5d29146",
+    "tests":  {
+                  "known_vulnerability_reproductions":  5,
+                  "command":  "npx.cmd hardhat test test/Voting.test.js",
+                  "passing":  47,
+                  "exit_code":  0
+              },
+    "demo":  {
+                 "uses_virtual_time":  true,
+                 "exit_code":  0,
+                 "network":  "hardhat (in-memory)",
+                 "command":  "npx.cmd hardhat run scripts/demoScenario.js",
+                 "log_count":  35,
+                 "event_types":  12,
+                 "winner":  "B"
+             },
+    "frontend_types":  {
+                           "exit_code":  0,
+                           "command":  "npx.cmd tsc --noEmit"
+                       },
+    "not_verified":  [
+                         "Browser and MetaMask flow after this change",
+                         "DOCX visual layout and PDF rendering",
+                         "Report submission and presentation completion"
+                     ],
+    "sha256":  {
+                   "contract/contracts/Voting.sol":  "8613b1a494e776e5a49b4c06ebe1a600e4f24c92a770f8d07eac56fda9998b98",
+                   "contract/test/Voting.test.js":  "efd0519796c2ced0474f1885a9ebd874ef0b0080de7da8d136f8b3d8d6a7ff1f",
+                   "contract/scripts/auditLog.js":  "f7c48bcb9f4ff1946bdc0d229d51db762511b0b74f8c732b6921c5424c9362ed",
+                   "contract/scripts/demoScenario.js":  "552e72ff3b49abd39b3b78498d8ba506b83e7f582752df6eaf770abc1100f149",
+                   "frontend/lib/Voting.json":  "e24d046db509edd504c650647f21103da202b29ed2d67cbd93dfd99ea87283a5",
+                   "docs/evidence/week8/tests.txt":  "d4eced650e4a670a252709035d3bdab3bf32bcec367f19a9087c2018382ef873",
+                   "docs/evidence/week8/demo-audit-log.txt":  "0d0c6f44f1567015965baa44f1acf40e2825cbf4943869fdf5b93014962e7505",
+                   "docs/reports/week8_report.docx":  "422ad23e4b22284bfe16fdb4bca6e4e23c842fb965c24a2204d48491622c31bc",
+                   "docs/reports/vulnerability_report_week8.docx":  "fd22e2fd235f22bfc62857aca171b9569e35db85f60560e47fd02bff5b01b879",
+                   "docs/reports/week8_presentation_notes.docx":  "d144aa9941c38a9ef47d0471a4359e0e3e887ae35f359db8f2a5ce25e40317cc"
+               }
+}

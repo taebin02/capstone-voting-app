@@ -34,6 +34,21 @@ contract Voting {
     event Resumed(address indexed by, uint timestamp);
     event ResultFinalized(address indexed by, string winner, uint timestamp);
 
+    // ============================================
+    // [8주차 보완 - 이벤트 로깅 확대, 진단 No.5]
+    // 7주차까지는 제안·승인·실행·정지·재개·확정만 기록되고, 유권자 등록·후보 추가·투표에는
+    // 전용 이벤트가 없었다. 관리자 변경·선거 시작은 제안 로그에 더해 실제 반영값도 기록한다.
+    // 아래 이벤트로 현재 제공하는 관리 함수와 투표 사실을 체인 로그에서 추적한다.
+    // ※ Voted에는 후보 번호를 일부러 넣지 않는다 (투표 선택이 로그로 한 번에 조회되는 것을 방지).
+    // 거래 입력과 공개 상태로 선택을 추론할 수 있으므로 익명성을 보장하는 조치는 아니다.
+    // ============================================
+    event VoterRegistered(address indexed by, address indexed voter, uint timestamp);
+    event CandidateAdded(address indexed by, uint indexed candidateIndex, string name);
+    event Voted(address indexed voter, uint timestamp);
+    event AdminAdded(address indexed admin, uint indexed proposalId);
+    event AdminRemoved(address indexed admin, uint indexed proposalId);
+    event ElectionStarted(uint endTime, uint indexed proposalId);
+
     enum ActionType { AddAdmin, RemoveAdmin, EmergencyStop, Resume, StartElection }
 
     struct Proposal {
@@ -136,10 +151,12 @@ contract Voting {
         if (p.action == ActionType.AddAdmin) {
             admins[p.target] = true;
             adminCount++;
+            emit AdminAdded(p.target, proposalId);
         } else if (p.action == ActionType.RemoveAdmin) {
             require(p.target != admin, "Cannot remove original admin");
             admins[p.target] = false;
             adminCount--;
+            emit AdminRemoved(p.target, proposalId);
         } else if (p.action == ActionType.EmergencyStop) {
             require(electionActive, "Election not active");
             paused = true;
@@ -154,6 +171,7 @@ contract Voting {
             require(!finalized, "Election already finalized");
             electionActive = true;
             endTime = block.timestamp + (p.durationMinutes * 1 minutes);
+            emit ElectionStarted(endTime, proposalId);
         }
 
         emit ProposalExecuted(proposalId, p.action);
@@ -167,11 +185,13 @@ contract Voting {
         if (!registeredVoters[voter]) {
             registeredVoters[voter] = true;
             voterCount++;
+            emit VoterRegistered(msg.sender, voter, block.timestamp);
         }
     }
 
     function addCandidate(string memory name, string memory role, string memory pledge) public onlyAdmin beforeElection {
         candidates.push(Candidate(name, role, pledge, 0));
+        emit CandidateAdded(msg.sender, candidates.length - 1, name);
     }
 
     function vote(uint candidateIndex) public notPaused {
@@ -182,6 +202,7 @@ contract Voting {
         require(candidateIndex < candidates.length, "Invalid candidate");
         hasVoted[msg.sender] = true;
         candidates[candidateIndex].voteCount++;
+        emit Voted(msg.sender, block.timestamp);
     }
 
     function getCandidateCount() public view returns (uint) {
