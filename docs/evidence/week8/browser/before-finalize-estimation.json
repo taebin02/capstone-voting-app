@@ -1,0 +1,43 @@
+{
+  "wallet": "Injected EIP-1193 test wallet; NOT MetaMask extension",
+  "network": "http://127.0.0.1:18545",
+  "realTimeWait": true,
+  "checks": [
+    "후보 A 화면 등록",
+    "후보 B 화면 등록",
+    "유권자 화면 등록",
+    "두 번째 관리자 화면 추가",
+    "다른 관리자의 화면 승인 후 선거 시작",
+    "화면에서 후보 B 투표",
+    "선거 시작 후 유권자 등록 차단 알림",
+    "선거 시작 후 후보 등록 차단 알림",
+    "비상 정지 화면 제안",
+    "비상 정지 화면 승인",
+    "재개 화면 제안",
+    "재개 화면 승인",
+    "추가 블록 없이 실제 시간 경과로 결과 확정 버튼 표시"
+  ],
+  "dialogs": [
+    {
+      "type": "alert",
+      "message": "선거가 시작된 후에는 유권자를 등록할 수 없습니다."
+    },
+    {
+      "type": "alert",
+      "message": "선거가 시작된 후에는 후보를 추가할 수 없습니다."
+    },
+    {
+      "type": "confirm",
+      "message": "강제 종료를 제안하시겠습니까?"
+    },
+    {
+      "type": "alert",
+      "message": "종료 시각이 아직 블록에 반영되지 않았습니다. 잠시 후 다시 시도해주세요."
+    }
+  ],
+  "errors": [],
+  "contract": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+  "lastBlockBeforeWait": 12,
+  "endTime": 1792820787,
+  "waitStartedAt": "2026-10-24T05:48:52.491Z"
+}

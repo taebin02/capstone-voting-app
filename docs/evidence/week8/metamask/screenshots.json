@@ -1,0 +1,49 @@
+{
+  "date": "2026-10-24",
+  "timezone": "Asia/Seoul",
+  "source": "User screenshots from Pictures/Screenshots, inspected and copied without modification",
+  "files": [
+    {
+      "original_filename": "스크린샷 2026-10-24 151653.png",
+      "stored_path": "01-voted-candidate-b.png",
+      "description": "Actual MetaMask: B one vote, seven voters, countdown active",
+      "sha256": "834c3b8b39eb8cebd271a71cfe9eabb6637fa86c5aa1b0c577910a52753ebb87",
+      "byte_identical": true
+    },
+    {
+      "original_filename": "스크린샷 2026-10-24 152403.png",
+      "stored_path": "02-ended-before-finalize.png",
+      "description": "Actual MetaMask: election ended, B one vote, finalize button visible",
+      "sha256": "8ec959ce4c15cb5ebea1930b24457a55e048d9350d8b38fbdc5554bd2922ad14",
+      "byte_identical": true
+    },
+    {
+      "original_filename": "스크린샷 2026-10-24 152429.png",
+      "stored_path": "03-finalized-candidate-b.png",
+      "description": "Actual MetaMask: finalized winner B with one vote",
+      "sha256": "51baaf0fc9d5c71e76fba8547410ccbfc7ab593d1511d1b5982de3d719764c5b",
+      "byte_identical": true
+    },
+    {
+      "original_filename": "스크린샷 2026-10-24 150026.png",
+      "stored_path": "zero-vote/01-ended-before-finalize.png",
+      "description": "Earlier zero-vote election, before finalization",
+      "sha256": "662ea6c75d835df19f8ffbc84088fa73586fe936aa46d497763a729aa693db72",
+      "byte_identical": true
+    },
+    {
+      "original_filename": "스크린샷 2026-10-24 150059.png",
+      "stored_path": "zero-vote/02-finalized-candidate-a.png",
+      "description": "Earlier zero-vote election selected A under known V-G",
+      "sha256": "12c44fff656c1ee06954ef62dde759dd7578fb7b012dcfa7e05946253b1097ae",
+      "byte_identical": true
+    },
+    {
+      "original_filename": "스크린샷 2026-10-24 151506.png",
+      "stored_path": "04-stale-display-after-reset.png",
+      "description": "Stale old zero-vote result after local reset; not the new election result",
+      "sha256": "ff53a589d0821689d4e1c8e94fae6846613207e92687fe23bd167b7d4436af8a",
+      "byte_identical": true
+    }
+  ]
+}

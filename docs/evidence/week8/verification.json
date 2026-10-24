@@ -1,44 +1,91 @@
-﻿{
-    "date":  "2026-10-24",
-    "timezone":  "Asia/Seoul",
-    "environment":  "Current Windows workspace via Codex tools",
-    "node":  "v24.16.0",
-    "solidity":  "0.8.24",
-    "before_commit":  "5d29146",
-    "tests":  {
-                  "known_vulnerability_reproductions":  5,
-                  "command":  "npx.cmd hardhat test test/Voting.test.js",
-                  "passing":  47,
-                  "exit_code":  0
-              },
-    "demo":  {
-                 "uses_virtual_time":  true,
-                 "exit_code":  0,
-                 "network":  "hardhat (in-memory)",
-                 "command":  "npx.cmd hardhat run scripts/demoScenario.js",
-                 "log_count":  35,
-                 "event_types":  12,
-                 "winner":  "B"
-             },
-    "frontend_types":  {
-                           "exit_code":  0,
-                           "command":  "npx.cmd tsc --noEmit"
-                       },
-    "not_verified":  [
-                         "Browser and MetaMask flow after this change",
-                         "DOCX visual layout and PDF rendering",
-                         "Report submission and presentation completion"
-                     ],
-    "sha256":  {
-                   "contract/contracts/Voting.sol":  "8613b1a494e776e5a49b4c06ebe1a600e4f24c92a770f8d07eac56fda9998b98",
-                   "contract/test/Voting.test.js":  "efd0519796c2ced0474f1885a9ebd874ef0b0080de7da8d136f8b3d8d6a7ff1f",
-                   "contract/scripts/auditLog.js":  "f7c48bcb9f4ff1946bdc0d229d51db762511b0b74f8c732b6921c5424c9362ed",
-                   "contract/scripts/demoScenario.js":  "552e72ff3b49abd39b3b78498d8ba506b83e7f582752df6eaf770abc1100f149",
-                   "frontend/lib/Voting.json":  "e24d046db509edd504c650647f21103da202b29ed2d67cbd93dfd99ea87283a5",
-                   "docs/evidence/week8/tests.txt":  "d4eced650e4a670a252709035d3bdab3bf32bcec367f19a9087c2018382ef873",
-                   "docs/evidence/week8/demo-audit-log.txt":  "0d0c6f44f1567015965baa44f1acf40e2825cbf4943869fdf5b93014962e7505",
-                   "docs/reports/week8_report.docx":  "422ad23e4b22284bfe16fdb4bca6e4e23c842fb965c24a2204d48491622c31bc",
-                   "docs/reports/vulnerability_report_week8.docx":  "fd22e2fd235f22bfc62857aca171b9569e35db85f60560e47fd02bff5b01b879",
-                   "docs/reports/week8_presentation_notes.docx":  "d144aa9941c38a9ef47d0471a4359e0e3e887ae35f359db8f2a5ce25e40317cc"
-               }
+{
+  "date": "2026-10-24",
+  "timezone": "Asia/Seoul",
+  "environment": "Current Windows workspace via Codex tools",
+  "node": "v24.16.0",
+  "solidity": "0.8.24",
+  "before_commit": "5d29146",
+  "tests": {
+    "known_vulnerability_reproductions": 5,
+    "command": "npx.cmd hardhat test test/Voting.test.js",
+    "passing": 47,
+    "exit_code": 0
+  },
+  "demo": {
+    "uses_virtual_time": true,
+    "exit_code": 0,
+    "network": "hardhat (in-memory)",
+    "command": "npx.cmd hardhat run scripts/demoScenario.js",
+    "log_count": 35,
+    "event_types": 12,
+    "winner": "B"
+  },
+  "frontend_types": {
+    "command": "npx.cmd tsc --noEmit --incremental false",
+    "exit_code": 0
+  },
+  "not_verified": [
+    "Account switch was outside this manual scenario",
+    "Report submission and actual presentation"
+  ],
+  "sha256": {
+    "contract/contracts/Voting.sol": "8613b1a494e776e5a49b4c06ebe1a600e4f24c92a770f8d07eac56fda9998b98",
+    "contract/test/Voting.test.js": "efd0519796c2ced0474f1885a9ebd874ef0b0080de7da8d136f8b3d8d6a7ff1f",
+    "contract/scripts/auditLog.js": "f7c48bcb9f4ff1946bdc0d229d51db762511b0b74f8c732b6921c5424c9362ed",
+    "contract/scripts/demoScenario.js": "552e72ff3b49abd39b3b78498d8ba506b83e7f582752df6eaf770abc1100f149",
+    "frontend/lib/Voting.json": "e24d046db509edd504c650647f21103da202b29ed2d67cbd93dfd99ea87283a5",
+    "docs/evidence/week8/tests.txt": "d4eced650e4a670a252709035d3bdab3bf32bcec367f19a9087c2018382ef873",
+    "docs/evidence/week8/demo-audit-log.txt": "0d0c6f44f1567015965baa44f1acf40e2825cbf4943869fdf5b93014962e7505",
+    "docs/reports/week8_report.docx": "88421cd5762824ffb89de7e51df5259cf0ad17927e35e7cd95bf7a8340a73600",
+    "docs/reports/vulnerability_report_week8.docx": "cce669931a2dd0a16da554f69acc320ab8523a698940a1a1978a606a51c80c3f",
+    "docs/reports/week8_presentation_notes.docx": "447f1c1e05447c4e7b30e80b7ba71ade8f188b33eb0dbf8c25b334ea21255a5f",
+    "frontend/app/page.tsx": "b77a0881e1ce07a25458d12b900703b8a7aeb1825d68945575d3f65d2baababe",
+    "contract/scripts/checkWeek8Browser.cjs": "25d5d4204733b98dc9b7ebf8b766caae8de6f2bb7fefbc403689b6fa52cde7af",
+    "contract/scripts/prepareWeek8Manual.cjs": "71ae63e51a81532b09eb1ea17f70f0c07439c717e011f80eb1e477f3ea86d6a8",
+    "contract/scripts/prepareWeek8Wallets.cjs": "3cae0d983bc8b330f8542772bede4c36f19a9d4de82becd4cc70b5b3e6f0e404",
+    "docs/reports/build_week8_presentation.ps1": "b70133d635a60b32dbf817c7669f14f9fadf980fc13a86748493abbea2ad6520",
+    "docs/reports/generate_week8_reports.py": "cd695e31eb696310cadc9aed2e14ac59faf199739c5968a83e4b5a380fd9b3a0",
+    "docs/reports/render_week8_pdfs.mjs": "44c59e64edbd66cdf778493d677f0850b2962d68c18414f607ee757641873014",
+    "docs/reports/vulnerability_report_week8.pdf": "07a4b8631047c17dcbf88359f91e1672b80b188e222ea708a57a699bd9a3460f",
+    "docs/reports/week8_manual_check.docx": "cf569d6fd928b3bec4526174383c480b994e0c826e2f8a67e632ced7dd53777a",
+    "docs/reports/week8_manual_check.pdf": "8a2f80f2e2ee43fdc407b212fb77f574ccd4246777ecda9209f7e824b23574e3",
+    "docs/reports/week8_presentation.pdf": "4af9876d5d36720eeb041f0b5b2ee8e53b5547e876320fbb3d873eb4d189746b",
+    "docs/reports/week8_presentation.pptx": "a94413b0f8da9676bbc1f9f9832c2901c6c041bb51e99a646896eb68484678be",
+    "docs/reports/week8_presentation_notes.pdf": "f1695f5680ad4824ac2c99d48d8703dd5529ac1a797d032a6c77a154d6fb91db",
+    "docs/reports/week8_report.pdf": "b716b6627fd2bb7303e96430a07b22f7e0fd57353461fb2fa907ee7a414b4fb2",
+    "docs/reports/format_week8_report.py": "56adf624c89df8565a7865ab128ef134a7fd9fe5ff84fa32530ff3d6ed8964aa",
+    "docs/reports/weekly_report_template.docx": "5b715cce28c74e96a3051a7cc1358a37df7479a2763653dcbce7c796247b96c4",
+    "docs/evidence/week8/metamask/result.json": "88d8a4717a542aebd1d6d0077471f7ac2a63ae3ff80a02aafd6e9de412896418",
+    "docs/evidence/week8/metamask/01-voted-candidate-b.png": "834c3b8b39eb8cebd271a71cfe9eabb6637fa86c5aa1b0c577910a52753ebb87",
+    "docs/evidence/week8/metamask/02-ended-before-finalize.png": "8ec959ce4c15cb5ebea1930b24457a55e048d9350d8b38fbdc5554bd2922ad14",
+    "docs/evidence/week8/metamask/03-finalized-candidate-b.png": "51baaf0fc9d5c71e76fba8547410ccbfc7ab593d1511d1b5982de3d719764c5b",
+    "docs/evidence/week8/metamask/04-stale-display-after-reset.png": "ff53a589d0821689d4e1c8e94fae6846613207e92687fe23bd167b7d4436af8a",
+    "docs/evidence/week8/metamask/previous-election-before-reset.json": "866295351bb3e4871a6fb4225cda8b7746411562ba8b239dffcc4040927d601e",
+    "docs/evidence/week8/metamask/screenshots.json": "7e20c52ed974e17fbed65a34f4571c3af0c240cca898e85e034bf92f958ebd34",
+    "docs/evidence/week8/metamask/zero-vote/01-ended-before-finalize.png": "662ea6c75d835df19f8ffbc84088fa73586fe936aa46d497763a729aa693db72",
+    "docs/evidence/week8/metamask/zero-vote/02-finalized-candidate-a.png": "12c44fff656c1ee06954ef62dde759dd7578fb7b012dcfa7e05946253b1097ae",
+    "docs/evidence/week8/metamask/zero-vote-result.json": "495d31e47f47645c3acdf132d34ea1abb09324481043b9be96bd9e551f6a6cf0"
+  },
+  "browser": {
+    "normal": "passed",
+    "stale_estimation_regression": "passed",
+    "real_time_wait": true,
+    "wallet": "EIP-1193 test wallet, separate from actual MetaMask"
+  },
+  "documents": {
+    "word_pdf_export": true,
+    "visual_review": true,
+    "presentation_slides": 5,
+    "presentation_target_seconds": 160,
+    "weekly_report_format": "User supplied week 7 report styles and section order",
+    "weekly_report_pages": 4
+  },
+  "manual_metamask": {
+    "source": "Actual MetaMask in user separate browser; 3 screenshots reviewed in conversation and localhost:8545 chain inspected",
+    "start_approval_and_countdown": "confirmed by user",
+    "vote": "confirmed on local chain: vote(1), candidate B, one vote",
+    "finalize": "confirmed on local chain: winner B",
+    "screenshots": "Original files stored and SHA-256 verified; 3 successful scenario images plus 3 separate historical/stale-display images",
+    "account_switch": "not independently verified"
+  }
 }

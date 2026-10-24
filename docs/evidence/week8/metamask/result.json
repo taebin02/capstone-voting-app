@@ -1,0 +1,52 @@
+{
+  "checkedAt": "2026-10-24T06:25:35.772Z",
+  "source": "Actual MetaMask in user separate browser; 3 screenshots reviewed in conversation and localhost:8545 chain inspected",
+  "status": "passed",
+  "contract": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+  "voterCount": 7,
+  "votes": [
+    "0",
+    "1"
+  ],
+  "finalized": true,
+  "winner": "후보 B",
+  "voteTransactions": [
+    {
+      "transactionHash": "0x369afaf83deb811494aa32258f9c3f3839d3a5fe05348dd6ad05d4a602610018",
+      "voter": "0xf0E1...3242",
+      "candidateIndex": 1,
+      "blockNumber": 23,
+      "timestamp": 1792822432
+    }
+  ],
+  "startTransactions": [
+    {
+      "transactionHash": "0x45a4e42254dc39228289a34f78890875eef8de2e76548463625eae981b20eef0",
+      "proposalId": "1",
+      "endTime": 1792823025
+    }
+  ],
+  "finalizeTransactions": [
+    {
+      "transactionHash": "0x1e1e4f637b7bd81cb2f98b6ea59b5b9607055dcb39623106fc34bc42bd6fa1bc",
+      "winner": "후보 B",
+      "timestamp": 1792823074
+    }
+  ],
+  "accountSwitch": "not independently verified",
+  "screenshotStorage": "Original files copied without modification to docs/evidence/week8/metamask; see screenshots.json",
+  "screenshots": [
+    {
+      "path": "01-voted-candidate-b.png",
+      "sha256": "834c3b8b39eb8cebd271a71cfe9eabb6637fa86c5aa1b0c577910a52753ebb87"
+    },
+    {
+      "path": "02-ended-before-finalize.png",
+      "sha256": "8ec959ce4c15cb5ebea1930b24457a55e048d9350d8b38fbdc5554bd2922ad14"
+    },
+    {
+      "path": "03-finalized-candidate-b.png",
+      "sha256": "51baaf0fc9d5c71e76fba8547410ccbfc7ab593d1511d1b5982de3d719764c5b"
+    }
+  ]
+}

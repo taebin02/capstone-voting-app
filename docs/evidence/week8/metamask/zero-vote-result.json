@@ -1,0 +1,14 @@
+{
+  "checkedAt": "2026-10-24T06:02:52.881Z",
+  "source": "User separate browser with actual MetaMask; chain read via localhost:8545",
+  "startApprovalAndCountdown": "confirmed by user",
+  "finalized": true,
+  "votes": [
+    "0",
+    "0"
+  ],
+  "winner": "후보 A",
+  "finalizeTransaction": "0xc0ac183fb379ab9a55c8d8df95bdf6c411763d31d91cda009b951c408c167ce8",
+  "voteTransaction": "not verified (zero votes)",
+  "note": "Zero-vote result selects first candidate under known V-G; this is distinct from injected-wallet browser tests"
+}

@@ -1,0 +1,189 @@
+{
+  "wallet": "Injected EIP-1193 test wallet; NOT MetaMask extension",
+  "network": "http://127.0.0.1:18545",
+  "realTimeWait": true,
+  "checks": [
+    "후보 A 화면 등록",
+    "후보 B 화면 등록",
+    "유권자 화면 등록",
+    "두 번째 관리자 화면 추가",
+    "다른 관리자의 화면 승인 후 선거 시작",
+    "화면에서 후보 B 투표",
+    "선거 시작 후 유권자 등록 차단 알림",
+    "선거 시작 후 후보 등록 차단 알림",
+    "비상 정지 화면 제안",
+    "비상 정지 화면 승인",
+    "재개 화면 제안",
+    "재개 화면 승인",
+    "추가 블록 없이 실제 시간 경과로 결과 확정 버튼 표시",
+    "latest 블록 가스 추정 실패 후 명시한 가스 예산으로 확정 성공",
+    "화면 finalize 거래 후 후보 B 당선자 표시"
+  ],
+  "dialogs": [
+    {
+      "type": "alert",
+      "message": "선거가 시작된 후에는 유권자를 등록할 수 없습니다."
+    },
+    {
+      "type": "alert",
+      "message": "선거가 시작된 후에는 후보를 추가할 수 없습니다."
+    },
+    {
+      "type": "confirm",
+      "message": "강제 종료를 제안하시겠습니까?"
+    }
+  ],
+  "errors": [],
+  "estimateBlockTag": "finalize estimates explicitly use latest block to reproduce stale estimation",
+  "contract": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+  "rpc": [
+    {
+      "method": "eth_estimateGas",
+      "result": "0x1e942"
+    },
+    {
+      "method": "eth_sendTransaction",
+      "gas": "0x1e942",
+      "result": "0x00876b30be5ffe7e69ce1cadab2282f407c397729ca5aa9ce8f5fbce59194d4f"
+    },
+    {
+      "method": "eth_estimateGas",
+      "result": "0x1a676"
+    },
+    {
+      "method": "eth_sendTransaction",
+      "gas": "0x1a676",
+      "result": "0xd2c3a9beb6543e48a42e1434bb069f534223daf0dc7d49ce06166d061424558f"
+    },
+    {
+      "method": "eth_estimateGas",
+      "result": "0x11d49"
+    },
+    {
+      "method": "eth_sendTransaction",
+      "gas": "0x11d49",
+      "result": "0x2af06fe2ac7ccfa377f790060fbddded5094da7e976135430f53fa5a50887e64"
+    },
+    {
+      "method": "eth_estimateGas",
+      "result": "0x20848"
+    },
+    {
+      "method": "eth_sendTransaction",
+      "gas": "0x20848",
+      "result": "0x1e355ffb83a1f1e9cf8c185a0532c6e6258dc37def3755bf435534a1e328a9f0"
+    },
+    {
+      "method": "eth_estimateGas",
+      "result": "0x1f84e"
+    },
+    {
+      "method": "eth_sendTransaction",
+      "gas": "0x1f84e",
+      "result": "0x6dcc2e7564b9eae2076704191973a7fe37226dda1cc617279253608da8dc80ab"
+    },
+    {
+      "method": "eth_estimateGas",
+      "result": "0x217c2"
+    },
+    {
+      "method": "eth_sendTransaction",
+      "gas": "0x217c2",
+      "result": "0xb047f8264b9aec210aecb012caf850e76df3861123e1e28eae2f65d7f3b50173"
+    },
+    {
+      "method": "eth_estimateGas",
+      "result": "0x13479"
+    },
+    {
+      "method": "eth_sendTransaction",
+      "gas": "0x13479",
+      "result": "0xcba0bf203f53d14baa2d374db309683ae514f231ed1c8c4fca7307095b1ba1fe"
+    },
+    {
+      "method": "eth_estimateGas",
+      "error": "Error: VM Exception while processing transaction: reverted with reason string 'Election already started'"
+    },
+    {
+      "method": "eth_estimateGas",
+      "error": "Error: VM Exception while processing transaction: reverted with reason string 'Election already started'"
+    },
+    {
+      "method": "eth_estimateGas",
+      "result": "0x1aa86"
+    },
+    {
+      "method": "eth_sendTransaction",
+      "gas": "0x1aa86",
+      "result": "0xb47aaecca70f51cdc301b71798aab8f4689a87719ff7c751b391ce8e9634a0b8"
+    },
+    {
+      "method": "eth_estimateGas",
+      "result": "0x1c299"
+    },
+    {
+      "method": "eth_sendTransaction",
+      "gas": "0x1c299",
+      "result": "0xc220ee7a51430605b89e0e5224fdf2eaca3a10139dc5c50ff34a69674f376ccc"
+    },
+    {
+      "method": "eth_estimateGas",
+      "result": "0x1aa86"
+    },
+    {
+      "method": "eth_sendTransaction",
+      "gas": "0x1aa86",
+      "result": "0x4b9f78b68c72e4a3de4b9a573cd954f28098174f1b9e5589fb0babdc2127f00f"
+    },
+    {
+      "method": "eth_estimateGas",
+      "result": "0x1c37d"
+    },
+    {
+      "method": "eth_sendTransaction",
+      "gas": "0x1c37d",
+      "result": "0x3fbd2888e6f1bec0f2625ceb44a8162b4611d39861e9e42feb613558f797538c"
+    },
+    {
+      "method": "eth_estimateGas",
+      "error": "Error: VM Exception while processing transaction: reverted with reason string 'Election still active'"
+    },
+    {
+      "method": "eth_sendTransaction",
+      "gas": "0x2dc6c0",
+      "result": "0x0cd1989dd60b95abf46d2e9863374443519044acbda740058c8428183f267bb4"
+    }
+  ],
+  "lastBlockBeforeWait": 12,
+  "endTime": 1792821436,
+  "waitStartedAt": "2026-10-24T05:55:18.299Z",
+  "eventTypes": [
+    "CandidateAdded",
+    "VoterRegistered",
+    "ProposalCreated",
+    "AdminAdded",
+    "ProposalExecuted",
+    "ProposalApproved",
+    "ElectionStarted",
+    "Voted",
+    "EmergencyStopped",
+    "Resumed",
+    "ResultFinalized"
+  ],
+  "transactionHashes": [
+    "0x00876b30be5ffe7e69ce1cadab2282f407c397729ca5aa9ce8f5fbce59194d4f",
+    "0xd2c3a9beb6543e48a42e1434bb069f534223daf0dc7d49ce06166d061424558f",
+    "0x2af06fe2ac7ccfa377f790060fbddded5094da7e976135430f53fa5a50887e64",
+    "0x1e355ffb83a1f1e9cf8c185a0532c6e6258dc37def3755bf435534a1e328a9f0",
+    "0x6dcc2e7564b9eae2076704191973a7fe37226dda1cc617279253608da8dc80ab",
+    "0xb047f8264b9aec210aecb012caf850e76df3861123e1e28eae2f65d7f3b50173",
+    "0xcba0bf203f53d14baa2d374db309683ae514f231ed1c8c4fca7307095b1ba1fe",
+    "0xb47aaecca70f51cdc301b71798aab8f4689a87719ff7c751b391ce8e9634a0b8",
+    "0xc220ee7a51430605b89e0e5224fdf2eaca3a10139dc5c50ff34a69674f376ccc",
+    "0x4b9f78b68c72e4a3de4b9a573cd954f28098174f1b9e5589fb0babdc2127f00f",
+    "0x3fbd2888e6f1bec0f2625ceb44a8162b4611d39861e9e42feb613558f797538c",
+    "0x0cd1989dd60b95abf46d2e9863374443519044acbda740058c8428183f267bb4"
+  ],
+  "completedAt": "2026-10-24T05:57:18.306Z",
+  "status": "passed"
+}

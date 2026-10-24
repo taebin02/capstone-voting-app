@@ -77,7 +77,24 @@ export default function Home() {
     if (!contract) { alert("지갑을 먼저 연결해주세요!"); return; }
     setFinalizing(true);
     try {
-      const tx = await contract.finalize();
+      let tx;
+      try {
+        tx = await contract.finalize();
+      } catch (estimateError: any) {
+        // 거래가 없는 로컬 체인은 종료 뒤에도 이전 블록 시각으로 가스를 추정할 수 있다.
+        // 이 경우에만 명시한 가스 예산으로 전송해 새 블록에서 종료 조건을 검증한다.
+        const reason = estimateError.reason || estimateError.message || "";
+        if (!reason.includes("Election still active")) throw estimateError;
+        const provider = contract.runner?.provider;
+        const [latest, end] = await Promise.all([
+          provider?.getBlock("latest"), contract.endTime(),
+        ]);
+        if (!latest || latest.timestamp > Number(end) || Math.floor(Date.now() / 1000) <= Number(end)) {
+          throw estimateError;
+        }
+        const budget = BigInt(3_000_000);
+        tx = await contract.finalize({ gasLimit: latest.gasLimit < budget ? latest.gasLimit : budget });
+      }
       await tx.wait();
       showToast("결과가 확정되었습니다");
       await loadWinner();
@@ -194,7 +211,7 @@ export default function Home() {
           setRemainingTime("강제 종료됨");
         } else if (Number(endTime) === 0) {
           setRemainingTime("선거 시작 전");
-        } else if (diff <= 0) {
+        } else if (diff < 0) {
           setRemainingTime("투표 종료");
         } else {
           const h = Math.floor(diff / 3600);
