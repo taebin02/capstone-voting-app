@@ -1,0 +1,34 @@
+{
+  "checkedAt": "2026-10-30T05:46:43.906Z",
+  "source": "User actual MetaMask browser screenshots plus localhost chain reads",
+  "checks": [
+    {
+      "proposalId": 4,
+      "observedUiError": "Already admin",
+      "userScreenshotReviewed": true,
+      "executed": false,
+      "approvalCount": 1
+    },
+    {
+      "proposalId": 5,
+      "observedUiError": "Not an admin",
+      "userScreenshotReviewed": true,
+      "executed": false,
+      "approvalCount": 1
+    },
+    {
+      "proposalId": 7,
+      "observedUiError": "Election already started",
+      "userScreenshotReviewed": true,
+      "executed": false,
+      "approvalCount": 1
+    }
+  ],
+  "adminCount": 4,
+  "endTime": 1793340882,
+  "electionActive": true,
+  "paused": false,
+  "originalEndTimeKST": "2026. 10. 30. 15시 14분 42초",
+  "status": "passed",
+  "scope": "Duplicate admin, non-admin removal, restart during active election; other edge cases remain covered by automated tests"
+}

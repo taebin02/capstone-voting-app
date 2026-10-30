@@ -1,0 +1,12 @@
+{
+  "checkedAt": "2026-10-30T05:44:47.341Z",
+  "initialStartConfirmedByUser": true,
+  "originalEndTime": 1793340882,
+  "originalEndTimeKST": "2026. 10. 30. 15시 14분 42초",
+  "restartProposalId": 7,
+  "restartDurationMinutes": 60,
+  "approvalCount": 1,
+  "executed": false,
+  "adminCount": 4,
+  "status": "awaiting actual MetaMask approval attempt"
+}

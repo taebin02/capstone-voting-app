@@ -400,39 +400,149 @@ describe("Voting - 멀티시그 / 비상정지 / 투표 무결성", function () 
     });
   });
 
-  // ------------------------------------------------------------------
-  // 아래는 "취약점 탐지" 테스트: 현재 컨트랙트가 아직 방어하지 못하는 동작을
-  // 일부러 재현해서 취약점진단보고서의 근거로 쓰기 위한 것.
-  // (현재 상태에서는 '취약하다'는 사실을 통과로 기록한다)
-  // ------------------------------------------------------------------
-  describe("9. [취약점 탐지] 아직 남아 있는 약점", function () {
-    it("V-C. 이미 관리자인 주소를 다시 추가하면 adminCount가 부풀려진다", async function () {
-      await setupTwoAdmins();                                  // adminCount = 2
+  describe("9. [9주차 보완 검증] 관리자 인원 무결성 및 선거 1회 제한", function () {
+    async function addThirdAdmin() {
+      await setupTwoAdmins();
       await voting.connect(owner).propose(AddAdmin, admin3.address, 0);
-      await voting.connect(admin2).approve(1);                 // adminCount = 3
-      await voting.connect(owner).propose(AddAdmin, admin3.address, 0); // 이미 관리자인 주소
-      await voting.connect(admin2).approve(2);
-      expect(await voting.adminCount()).to.equal(4);           // 취약: 실제 관리자는 3명인데 4로 집계
-    });
-
-    it("V-D. 관리자가 아닌 주소를 제거하면 adminCount가 잘못 줄어든다", async function () {
-      await setupTwoAdmins();                                  // adminCount = 2
-      await voting.connect(owner).propose(RemoveAdmin, outsider.address, 0); // outsider는 관리자 아님
       await voting.connect(admin2).approve(1);
-      expect(await voting.adminCount()).to.equal(1);           // 취약: 실제론 2명인데 1로 집계 → 단독 관리자 예외 재개방
+    }
+
+    it("V-C. 첫 관리자만 있을 때 자신을 다시 추가해도 인원이 늘지 않는다", async function () {
+      await expect(voting.propose(AddAdmin, owner.address, 0)).to.be.revertedWith("Already admin");
+      expect(await voting.adminCount()).to.equal(1);
+      expect(await voting.getProposalCount()).to.equal(0);
     });
 
-    it("V-E. (결과 확정 전) 종료된 선거에 StartElection을 다시 실행하면 hasVoted가 유지된 채 재개된다", async function () {
+    it("V-C. 0주소를 관리자로 추가할 수 없다", async function () {
+      await expect(voting.propose(AddAdmin, ZERO, 0)).to.be.revertedWith("Invalid admin address");
+      expect(await voting.adminCount()).to.equal(1);
+      expect(await voting.admins(ZERO)).to.equal(false);
+    });
+
+    it("V-C. 중복 추가 실행이 거부되고 승인·실행·인원 상태가 되돌아간다", async function () {
+      await addThirdAdmin();
+      await voting.propose(AddAdmin, admin3.address, 0);
+      await expect(voting.connect(admin2).approve(2)).to.be.revertedWith("Already admin");
+      expect(await voting.adminCount()).to.equal(3);
+      const p = await voting.proposals(2);
+      expect(p.approvalCount).to.equal(1);
+      expect(p.executed).to.equal(false);
+      expect(await voting.hasApproved(2, admin2.address)).to.equal(false);
+    });
+
+    it("V-C. 같은 주소의 추가 제안이 겹쳐도 두 번째 실행 시점에 차단된다", async function () {
+      await setupTwoAdmins();
+      await voting.propose(AddAdmin, admin3.address, 0); // 1
+      await voting.propose(AddAdmin, admin3.address, 0); // 2
+      await voting.connect(admin2).approve(1);
+      await expect(voting.connect(admin2).approve(2)).to.be.revertedWith("Already admin");
+      expect(await voting.adminCount()).to.equal(3);
+    });
+
+    it("V-D. 비관리자 제거로 인원 감소·단독 추가 예외가 열리지 않는다", async function () {
+      await setupTwoAdmins();
+      await voting.propose(RemoveAdmin, outsider.address, 0);
+      await expect(voting.connect(admin2).approve(1)).to.be.revertedWith("Not an admin");
+      expect(await voting.adminCount()).to.equal(2);
+      await voting.propose(AddAdmin, admin3.address, 0);
+      expect(await voting.admins(admin3.address)).to.equal(false);
+      expect((await voting.proposals(2)).approvalCount).to.equal(1);
+      await voting.connect(admin2).approve(2);
+      expect(await voting.adminCount()).to.equal(3);
+    });
+
+    it("V-D. 실제 관리자를 제거하더라도 2명 미만으로 줄일 수 없다", async function () {
+      await setupTwoAdmins();
+      await voting.propose(RemoveAdmin, admin2.address, 0);
+      await expect(voting.connect(admin2).approve(1)).to.be.revertedWith("Too few admins");
+      expect(await voting.adminCount()).to.equal(2);
+      expect(await voting.admins(admin2.address)).to.equal(true);
+    });
+
+    it("V-D. 제거 후 정상 재추가하면 실제 구성원 수와 인원 수가 일치한다", async function () {
+      await addThirdAdmin();
+      await voting.propose(RemoveAdmin, admin3.address, 0);
+      await voting.connect(admin2).approve(2);
+      expect(await voting.adminCount()).to.equal(2);
+      expect(await voting.admins(admin3.address)).to.equal(false);
+      await expect(voting.connect(admin3).propose(AddAdmin, outsider.address, 0)).to.be.revertedWith("Only admin");
+      await voting.propose(AddAdmin, admin3.address, 0);
+      await voting.connect(admin2).approve(3);
+      expect(await voting.adminCount()).to.equal(3);
+      expect(await voting.admins(admin3.address)).to.equal(true);
+    });
+
+    it("V-D. 제거 제안이 겹쳐도 이미 제거된 주소로 인원을 다시 줄이지 못한다", async function () {
+      await addThirdAdmin();
+      await voting.propose(RemoveAdmin, admin3.address, 0); // 2
+      await voting.propose(RemoveAdmin, admin3.address, 0); // 3
+      await voting.connect(admin2).approve(2);
+      await expect(voting.connect(admin2).approve(3)).to.be.revertedWith("Not an admin");
+      expect(await voting.adminCount()).to.equal(2);
+    });
+
+    it("V-E. 진행 중 재시작으로 종료 시각을 바꿀 수 없다", async function () {
+      await startRunningElection();
+      const end = await voting.endTime();
+      const id = await voting.getProposalCount();
+      await voting.propose(StartElection, ZERO, 120);
+      await expect(voting.connect(admin2).approve(id)).to.be.revertedWith("Election already started");
+      expect(await voting.endTime()).to.equal(end);
+    });
+
+    it("V-E. 정지 상태에서 시작 제안으로 정지를 우회할 수 없다", async function () {
+      await startRunningElection();
+      let id = await voting.getProposalCount();
+      await voting.propose(EmergencyStop, ZERO, 0);
+      await voting.connect(admin2).approve(id);
+      const end = await voting.endTime();
+      id = await voting.getProposalCount();
+      await voting.propose(StartElection, ZERO, 120);
+      await expect(voting.connect(admin2).approve(id)).to.be.revertedWith("Election already started");
+      expect(await voting.paused()).to.equal(true);
+      expect(await voting.electionActive()).to.equal(false);
+      expect(await voting.endTime()).to.equal(end);
+    });
+
+    it("V-E. 종료 후 확정 전에도 재시작을 막고 득표·투표 기록을 보존한다", async function () {
       await startRunningElection(1);
       await voting.connect(voter1).vote(0);
+      const end = await voting.endTime();
       await time.increase(61);
       const id = await voting.getProposalCount();
-      await voting.connect(owner).propose(StartElection, ZERO, 60);
-      await voting.connect(admin2).approve(id);
-      expect(await voting.electionActive()).to.equal(true);    // 취약: 종료 후 재시작 가능(득표 초기화 없음)
+      await voting.propose(StartElection, ZERO, 60);
+      await expect(voting.connect(admin2).approve(id)).to.be.revertedWith("Election already started");
+      expect(await voting.endTime()).to.equal(end);
+      expect(await voting.hasVoted(voter1.address)).to.equal(true);
       expect((await voting.candidates(0)).voteCount).to.equal(1);
+      await expect(voting.connect(voter2).vote(0)).to.be.revertedWith("Election ended");
+      await voting.finalize();
+      expect(await voting.getWinner()).to.equal("A");
     });
 
+    it("V-E. 시작 전에 만든 두 제안도 하나만 실행할 수 있다", async function () {
+      await setupTwoAdmins();
+      await voting.propose(StartElection, ZERO, 60);  // 1
+      await voting.propose(StartElection, ZERO, 120); // 2
+      await voting.connect(admin2).approve(1);
+      const end = await voting.endTime();
+      await expect(voting.connect(admin2).approve(2)).to.be.revertedWith("Election already started");
+      expect(await voting.endTime()).to.equal(end);
+    });
+
+    it("시작 시간 0분을 거부하고 유효한 새 시작 제안은 실행할 수 있다", async function () {
+      await setupTwoAdmins();
+      await voting.propose(StartElection, ZERO, 0);
+      await expect(voting.connect(admin2).approve(1)).to.be.revertedWith("Invalid duration");
+      expect(await voting.endTime()).to.equal(0);
+      await voting.propose(StartElection, ZERO, 1);
+      await voting.connect(admin2).approve(2);
+      expect(await voting.electionActive()).to.equal(true);
+    });
+  });
+
+  // 통과 = 남은 취약점 존재 확인. V-G·No.15는 10주차 보완 대상으로 유지한다.
+  describe("10. [취약점 탐지] 아직 남아 있는 약점", function () {
     it("V-G. 동점이면 후보 등록 순서가 앞선 후보가 자동으로 당선자가 된다", async function () {
       await startRunningElection(1);
       await voting.connect(voter1).vote(1); // B 1표

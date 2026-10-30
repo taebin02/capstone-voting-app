@@ -149,11 +149,17 @@ contract Voting {
         p.executed = true;
 
         if (p.action == ActionType.AddAdmin) {
+            // 실행 시점에 재검사한다. 먼저 실행된 다른 제안이 구성을 바꿨을 수 있다.
+            require(p.target != address(0), "Invalid admin address");
+            require(!admins[p.target], "Already admin");
             admins[p.target] = true;
             adminCount++;
             emit AdminAdded(p.target, proposalId);
         } else if (p.action == ActionType.RemoveAdmin) {
             require(p.target != admin, "Cannot remove original admin");
+            require(admins[p.target], "Not an admin");
+            // 2인 승인 체계를 만든 뒤에는 제거로 1인 부트스트랩 예외를 다시 열지 않는다.
+            require(adminCount > requiredApprovals, "Too few admins");
             admins[p.target] = false;
             adminCount--;
             emit AdminRemoved(p.target, proposalId);
@@ -169,6 +175,9 @@ contract Voting {
             emit Resumed(msg.sender, block.timestamp);
         } else if (p.action == ActionType.StartElection) {
             require(!finalized, "Election already finalized");
+            // 선거 1회 정책: 진행·정지·자연 종료 여부와 관계없이 재시작 금지.
+            require(endTime == 0, "Election already started");
+            require(p.durationMinutes > 0, "Invalid duration");
             electionActive = true;
             endTime = block.timestamp + (p.durationMinutes * 1 minutes);
             emit ElectionStarted(endTime, proposalId);

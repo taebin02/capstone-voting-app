@@ -1,0 +1,29 @@
+{
+  "preparedAt": "2026-10-30T05:27:15.379Z",
+  "contract": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+  "bytecodeMatchesArtifact": true,
+  "adminAccount": "0xf0E1...3242",
+  "nonAdminAccount": "0x71Fd...c4b4",
+  "adminCount": 4,
+  "voterCount": 7,
+  "electionStarted": false,
+  "initialStartProposalId": 1,
+  "durationMinutes": 30,
+  "duplicateAdminProposalId": 4,
+  "nonAdminRemovalProposalId": 5,
+  "preflight": [
+    {
+      "proposalId": 4,
+      "expected": "Already admin",
+      "observed": "Already admin",
+      "method": "RPC gas estimation; not actual MetaMask confirmation"
+    },
+    {
+      "proposalId": 5,
+      "expected": "Not an admin",
+      "observed": "Not an admin",
+      "method": "RPC gas estimation; not actual MetaMask confirmation"
+    }
+  ],
+  "actualMetaMaskStatus": "awaiting user verification"
+}

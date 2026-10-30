@@ -1,0 +1,93 @@
+
+
+  Voting - 멀티시그 / 비상정지 / 투표 무결성
+    9. [9주차 보완 검증] 관리자 인원 무결성 및 선거 1회 제한
+      1) V-C. 첫 관리자만 있을 때 자신을 다시 추가해도 인원이 늘지 않는다
+      2) V-C. 0주소를 관리자로 추가할 수 없다
+      3) V-C. 중복 추가 실행이 거부되고 승인·실행·인원 상태가 되돌아간다
+      4) V-C. 같은 주소의 추가 제안이 겹쳐도 두 번째 실행 시점에 차단된다
+      5) V-D. 비관리자 제거로 인원 감소·단독 추가 예외가 열리지 않는다
+      6) V-D. 실제 관리자를 제거하더라도 2명 미만으로 줄일 수 없다
+      √ V-D. 제거 후 정상 재추가하면 실제 구성원 수와 인원 수가 일치한다 (47ms)
+      7) V-D. 제거 제안이 겹쳐도 이미 제거된 주소로 인원을 다시 줄이지 못한다
+      8) V-E. 진행 중 재시작으로 종료 시각을 바꿀 수 없다
+      9) V-E. 정지 상태에서 시작 제안으로 정지를 우회할 수 없다
+      10) V-E. 종료 후 확정 전에도 재시작을 막고 득표·투표 기록을 보존한다
+      11) V-E. 시작 전에 만든 두 제안도 하나만 실행할 수 있다
+      12) 시작 시간 0분을 거부하고 유효한 새 시작 제안은 실행할 수 있다
+
+
+  1 passing (815ms)
+  12 failing
+
+  1) Voting - 멀티시그 / 비상정지 / 투표 무결성
+       9. [9주차 보완 검증] 관리자 인원 무결성 및 선거 1회 제한
+         V-C. 첫 관리자만 있을 때 자신을 다시 추가해도 인원이 늘지 않는다:
+     AssertionError: Expected transaction to be reverted with reason 'Already admin', but it didn't revert
+      at Context.<anonymous> (test\Voting.test.js:411:7)
+
+  2) Voting - 멀티시그 / 비상정지 / 투표 무결성
+       9. [9주차 보완 검증] 관리자 인원 무결성 및 선거 1회 제한
+         V-C. 0주소를 관리자로 추가할 수 없다:
+     AssertionError: Expected transaction to be reverted with reason 'Invalid admin address', but it didn't revert
+      at Context.<anonymous> (test\Voting.test.js:417:7)
+
+  3) Voting - 멀티시그 / 비상정지 / 투표 무결성
+       9. [9주차 보완 검증] 관리자 인원 무결성 및 선거 1회 제한
+         V-C. 중복 추가 실행이 거부되고 승인·실행·인원 상태가 되돌아간다:
+     AssertionError: Expected transaction to be reverted with reason 'Already admin', but it didn't revert
+      at Context.<anonymous> (test\Voting.test.js:425:7)
+
+  4) Voting - 멀티시그 / 비상정지 / 투표 무결성
+       9. [9주차 보완 검증] 관리자 인원 무결성 및 선거 1회 제한
+         V-C. 같은 주소의 추가 제안이 겹쳐도 두 번째 실행 시점에 차단된다:
+     AssertionError: Expected transaction to be reverted with reason 'Already admin', but it didn't revert
+      at Context.<anonymous> (test\Voting.test.js:438:7)
+
+  5) Voting - 멀티시그 / 비상정지 / 투표 무결성
+       9. [9주차 보완 검증] 관리자 인원 무결성 및 선거 1회 제한
+         V-D. 비관리자 제거로 인원 감소·단독 추가 예외가 열리지 않는다:
+     AssertionError: Expected transaction to be reverted with reason 'Not an admin', but it didn't revert
+      at Context.<anonymous> (test\Voting.test.js:445:7)
+
+  6) Voting - 멀티시그 / 비상정지 / 투표 무결성
+       9. [9주차 보완 검증] 관리자 인원 무결성 및 선거 1회 제한
+         V-D. 실제 관리자를 제거하더라도 2명 미만으로 줄일 수 없다:
+     AssertionError: Expected transaction to be reverted with reason 'Too few admins', but it didn't revert
+      at Context.<anonymous> (test\Voting.test.js:457:7)
+
+  7) Voting - 멀티시그 / 비상정지 / 투표 무결성
+       9. [9주차 보완 검증] 관리자 인원 무결성 및 선거 1회 제한
+         V-D. 제거 제안이 겹쳐도 이미 제거된 주소로 인원을 다시 줄이지 못한다:
+     AssertionError: Expected transaction to be reverted with reason 'Not an admin', but it didn't revert
+      at Context.<anonymous> (test\Voting.test.js:480:7)
+
+  8) Voting - 멀티시그 / 비상정지 / 투표 무결성
+       9. [9주차 보완 검증] 관리자 인원 무결성 및 선거 1회 제한
+         V-E. 진행 중 재시작으로 종료 시각을 바꿀 수 없다:
+     AssertionError: Expected transaction to be reverted with reason 'Election already started', but it didn't revert
+      at Context.<anonymous> (test\Voting.test.js:489:7)
+
+  9) Voting - 멀티시그 / 비상정지 / 투표 무결성
+       9. [9주차 보완 검증] 관리자 인원 무결성 및 선거 1회 제한
+         V-E. 정지 상태에서 시작 제안으로 정지를 우회할 수 없다:
+     AssertionError: Expected transaction to be reverted with reason 'Election already started', but it didn't revert
+      at Context.<anonymous> (test\Voting.test.js:501:7)
+
+  10) Voting - 멀티시그 / 비상정지 / 투표 무결성
+       9. [9주차 보완 검증] 관리자 인원 무결성 및 선거 1회 제한
+         V-E. 종료 후 확정 전에도 재시작을 막고 득표·투표 기록을 보존한다:
+     AssertionError: Expected transaction to be reverted with reason 'Election already started', but it didn't revert
+      at Context.<anonymous> (test\Voting.test.js:514:7)
+
+  11) Voting - 멀티시그 / 비상정지 / 투표 무결성
+       9. [9주차 보완 검증] 관리자 인원 무결성 및 선거 1회 제한
+         V-E. 시작 전에 만든 두 제안도 하나만 실행할 수 있다:
+     AssertionError: Expected transaction to be reverted with reason 'Election already started', but it didn't revert
+      at Context.<anonymous> (test\Voting.test.js:529:7)
+
+  12) Voting - 멀티시그 / 비상정지 / 투표 무결성
+       9. [9주차 보완 검증] 관리자 인원 무결성 및 선거 1회 제한
+         시작 시간 0분을 거부하고 유효한 새 시작 제안은 실행할 수 있다:
+     AssertionError: Expected transaction to be reverted with reason 'Invalid duration', but it didn't revert
+      at Context.<anonymous> (test\Voting.test.js:536:7)

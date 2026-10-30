@@ -1,0 +1,93 @@
+{
+  "date": "2026-10-30",
+  "timezone": "Asia/Seoul",
+  "environment": "Current Windows workspace via Codex tools",
+  "node": "v24.16.0",
+  "hardhat": "2.28.6",
+  "solidity": "0.8.24",
+  "beforeCommit": "30d8e82",
+  "scope": [
+    "V-C",
+    "V-D",
+    "V-E"
+  ],
+  "baseline": {
+    "passing": 47,
+    "knownVulnerabilityTests": 5,
+    "exitCode": 0
+  },
+  "beforeDefense": {
+    "command": "node node_modules/hardhat/internal/cli/cli.js test test/Voting.test.js --grep 9주차",
+    "passing": 1,
+    "failing": 12,
+    "exitCode": 12,
+    "expectedFailure": true
+  },
+  "after": {
+    "command": "node node_modules/hardhat/internal/cli/cli.js test test/Voting.test.js",
+    "passing": 57,
+    "remainingDetectionTests": 2,
+    "newDefenseTests": 13,
+    "exitCode": 0
+  },
+  "frontend": {
+    "typeCheck": "npx.cmd tsc --noEmit --incremental false",
+    "exitCode": 0,
+    "abiUnchanged": true,
+    "artifactSynchronized": true
+  },
+  "reports": {
+    "weeklyPages": 3,
+    "vulnerabilityPages": 2,
+    "wordPdfExport": true,
+    "visualReview": true
+  },
+  "statusCounts": {
+    "resolved": 10,
+    "partial": 1,
+    "planned": 4
+  },
+  "notPerformed": [
+    "Commit/push",
+    "Report submission"
+  ],
+  "sha256": {
+    "contract/contracts/Voting.sol": "236380a0b72062fcae82f3e1fe3fda71feff28272bf8a014c4a4c8ef7131cd38",
+    "contract/test/Voting.test.js": "2001d8a57e780febebb3448d6f06bfd4ecc156bd250885dfaa3971a0811195fe",
+    "frontend/lib/Voting.json": "e8539147ff0dbcb30af1de6df84059e884467a3cd4ccd9fe658784ae6a1f589f",
+    "docs/reports/generate_week9_reports.py": "8f0e90368ba8ec20fa36c79db3fdfa9be4e7ebc0f022a4d73b0b283d618a3541",
+    "docs/reports/render_week9_pdfs.mjs": "7dc0a8cdb7c4e54259591ac1f2c8ab431ed0f8cf05f460c74cb3d5b368723a52",
+    "docs/reports/week9_report.docx": "6b919ec2b1c2c89cfb5335028d5e60e9833e7cb086a1324e514f7aa2435c77c0",
+    "docs/reports/week9_report.pdf": "236404f60186d61dacac565b04419f1fbb3548994e39522aa502e757804ed946",
+    "docs/reports/vulnerability_report_week9.docx": "0282e097c7ccaceb69ef69b595db0b1195704e93150cff5179c0264a7720f33d",
+    "docs/reports/vulnerability_report_week9.pdf": "d7f8b4d718ef811ca900da3f0eb0e811350ea73f2d18e2654ee98126a1c8af99",
+    "docs/evidence/week9/before-tests.txt": "5a3932c40a8875898d46bc0f69502ba89b431e72ed48a95f5ab43d10ef4caa9c",
+    "docs/evidence/week9/before-defense-tests.txt": "0c9aa0f0b98f56ce3972d42cbebb79bc37c624df3a732e8f127422dc0c4758ac",
+    "docs/evidence/week9/after-tests.txt": "5dd7287180905744f838298df0249f53f302a4dae445906c412dec5bb734dbad",
+    "contract/scripts/prepareWeek9Manual.cjs": "6139f3149ace8142ad11f6f7d67e931a786b370a893faba860f1229e07fbe806",
+    "docs/evidence/week9/metamask/01-duplicate-admin-blocked.png": "02d41a1925e5c042500049035f28abe64e86c0800723cd3990326102ed03b9e6",
+    "docs/evidence/week9/metamask/02-non-admin-removal-blocked.png": "4ff1f7a8c0a38d89e049590e96dae0de6e73183466f5c0d361518ed47a7098fe",
+    "docs/evidence/week9/metamask/03-election-restart-blocked.png": "3a713eda12055efad5c88c5287594fcad3c0a78eeb3d9846a3153857c9570e2a",
+    "docs/evidence/week9/metamask/restart-before-approval.json": "0a521f1bb322f61f822c8e8a9592653e90ce9559457b377a9ffbb9bd4b800a2f",
+    "docs/evidence/week9/metamask/result.json": "724cc3e5d41a47eb92171e86dd4ba9c21df4c0795d3d18a5c568d500e10d8640",
+    "docs/evidence/week9/metamask/screenshots.json": "545388c70a42eb3cbc2cf7ba609ed6f079d5c72e7172ed4c0a2704f3407009ec",
+    "docs/evidence/week9/metamask/setup.json": "e9b61eb857cac633875bcf4d18f07a710638c5485b34700b5a0cfe2c3ca236c9",
+    "docs/evidence/week9/metamask/ui-baseline.json": "772f28082a4521196733eafb1b93ed0ce0513b485b42d99f8c00fc56bb5e1868",
+    "docs/evidence/week9/metamask/ui-before-wallet-connection.png": "34e6a861bd8d69696805172534a3dd9311a928f8bd640d7b9e344a9c0dc892b7"
+  },
+  "manualMetaMask": {
+    "status": "passed",
+    "scope": "Duplicate admin, non-admin removal, restart during active election; other edge cases remain covered by automated tests",
+    "proposalIds": [
+      4,
+      5,
+      7
+    ],
+    "adminCountUnchanged": 4,
+    "endTimeUnchanged": 1793340882,
+    "endTimeKST": "2026. 10. 30. 15시 14분 42초",
+    "screenshots": 3,
+    "originalCopiesHashVerified": true,
+    "denials": "UI approval requests rejected during RPC estimation; no failed on-chain receipt claimed"
+  }
+}

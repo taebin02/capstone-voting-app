@@ -1,0 +1,28 @@
+{
+  "date": "2026-10-30",
+  "timezone": "Asia/Seoul",
+  "source": "User actual browser screenshots copied without modification",
+  "files": [
+    {
+      "originalFilename": "스크린샷 2026-10-30 144328.png",
+      "storedPath": "01-duplicate-admin-blocked.png",
+      "purpose": "V-C: Already admin; admin count remains 4",
+      "sha256": "02d41a1925e5c042500049035f28abe64e86c0800723cd3990326102ed03b9e6",
+      "byteIdentical": true
+    },
+    {
+      "originalFilename": "스크린샷 2026-10-30 144359.png",
+      "storedPath": "02-non-admin-removal-blocked.png",
+      "purpose": "V-D: Not an admin; admin count remains 4",
+      "sha256": "4ff1f7a8c0a38d89e049590e96dae0de6e73183466f5c0d361518ed47a7098fe",
+      "byteIdentical": true
+    },
+    {
+      "originalFilename": "스크린샷 2026-10-30 144624.png",
+      "storedPath": "03-election-restart-blocked.png",
+      "purpose": "V-E: Election already started; original end time unchanged",
+      "sha256": "3a713eda12055efad5c88c5287594fcad3c0a78eeb3d9846a3153857c9570e2a",
+      "byteIdentical": true
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "httpStatus": 200,
+  "walletConnectButtonVisible": true,
+  "pageErrors": [],
+  "actualMetaMask": "not tested by automation; awaiting user"
+}
