@@ -46,7 +46,7 @@ async function main() {
   const logs = await voting.queryFilter("*", 0, "latest");
   const eventNames = new Set(logs.map(log => log.eventName));
   const expected = voting.interface.fragments.filter(f => f.type === "event").map(f => f.name);
-  assert.equal(expected.length, 12);
+  assert.equal(expected.length, 13);
   for (const name of expected) assert.ok(eventNames.has(name), `${name} 이벤트 누락`);
   await printAuditLog(voting);
   console.log(`시연 검증 완료: 이벤트 ${eventNames.size}종, 당선자 B. 가상 시각을 사용한 로컬 검증입니다.`);

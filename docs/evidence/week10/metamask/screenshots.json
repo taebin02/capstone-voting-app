@@ -1,0 +1,42 @@
+{
+  "date": "2026-11-07",
+  "timezone": "Asia/Seoul",
+  "source": "User actual browser screenshots copied unchanged",
+  "files": [
+    {
+      "originalFilename": "스크린샷 2026-11-07 150317.png",
+      "storedPath": "01-paused-unfinalized.png",
+      "purpose": "Actual MetaMask-connected browser: pause notice, no final winner",
+      "sha256": "090c612eb1cc52bc530ed0c9b3cdf52a81f7bb7848b995b19e3a02551ceb939e",
+      "byteIdentical": true
+    },
+    {
+      "originalFilename": "스크린샷 2026-11-07 150517.png",
+      "storedPath": "troubleshooting/nonce-too-high.png",
+      "purpose": "Local reset nonce mismatch before fixture alignment; not a contract vulnerability",
+      "sha256": "c446d3e618d712304677f7e7684ab1e2842954bd1b07c7b209dc5955864ebc64",
+      "byteIdentical": true
+    },
+    {
+      "originalFilename": "스크린샷 2026-11-07 150640.png",
+      "storedPath": "02-zero-votes-finalized.png",
+      "purpose": "Actual MetaMask finalization: no winner, zero-vote reason",
+      "sha256": "040f89b4cc14a1af23596a4fe961e94177aed2722320f3f44a27340b006811e2",
+      "byteIdentical": true
+    },
+    {
+      "originalFilename": "스크린샷 2026-11-07 150818.png",
+      "storedPath": "03-tie-before-finalize.png",
+      "purpose": "Tie fixture: candidate A and B one vote each, before finalization",
+      "sha256": "a0ecb07de6320f327b291304ac9d5d68361a18cf0d3ac802b6233d62c5c08468",
+      "byteIdentical": true
+    },
+    {
+      "originalFilename": "스크린샷 2026-11-07 151036.png",
+      "storedPath": "04-tie-finalized.png",
+      "purpose": "Actual MetaMask finalization: no winner, tie reason",
+      "sha256": "be2e1325c3685199431198fa4ca1eec5c9764c5cd7238be38d57ed5ec605e694",
+      "byteIdentical": true
+    }
+  ]
+}

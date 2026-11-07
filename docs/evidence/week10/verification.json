@@ -1,0 +1,154 @@
+{
+  "date": "2026-11-07",
+  "timezone": "Asia/Seoul",
+  "beforeCommit": "c45b5e1",
+  "node": "v24.16.0",
+  "solidity": "0.8.24",
+  "scope": [
+    "V-G",
+    "No.15 getWinner publication policy"
+  ],
+  "userDecision": "Tie and zero votes finalize with no winner; re-election requires a new deployment",
+  "outcomes": {
+    "Pending": 0,
+    "Winner": 1,
+    "Tie": 2,
+    "NoVotes": 3
+  },
+  "baseline": {
+    "passing": 57,
+    "detectionTests": 2
+  },
+  "redTests": {
+    "disclosure": {
+      "failing": 3,
+      "passing": 0
+    },
+    "outcome": {
+      "failing": 8,
+      "passing": 0,
+      "sourceState": "after disclosure fix, before outcome fix; includes missing getter/event failures"
+    }
+  },
+  "after": {
+    "passing": 65,
+    "exitCode": 0,
+    "legacyDetectionExpectationsRemaining": 0
+  },
+  "frontend": {
+    "typeCheck": "npx.cmd tsc --noEmit --incremental false",
+    "exitCode": 0,
+    "artifactSynchronized": true,
+    "newGetter": "finalizedOutcome",
+    "events": 13
+  },
+  "browser": {
+    "status": "passed",
+    "scenarios": [
+      "winner",
+      "tie",
+      "zero",
+      "paused"
+    ],
+    "wallet": "Injected EIP-1193 test wallet, not actual MetaMask",
+    "virtualTime": true
+  },
+  "auditDemo": {
+    "status": "passed",
+    "eventTypes": 13,
+    "logCount": 36,
+    "virtualTime": true
+  },
+  "reports": {
+    "weeklyPages": 3,
+    "diagnosisPages": 2,
+    "wordPdfExport": true,
+    "visualReview": true
+  },
+  "statusCounts": {
+    "resolved": 12,
+    "partial": 1,
+    "planned": 2
+  },
+  "remainingDisclosure": "Public candidate vote counts and transaction inputs remain; no voting secrecy claim",
+  "notPerformed": [
+    "Weekly report submission"
+  ],
+  "sha256": {
+    "contract/contracts/Voting.sol": "911923d5ec9f93de4e8613aa092b56cf7af01cda5fdefeee032c5a6f23b245de",
+    "contract/test/Voting.test.js": "446f58f39076fb826cad00c6ca9a29c16bd0857dc84d892ab29b1a0fb471ba51",
+    "contract/scripts/auditLog.js": "30ee13a062c640eb353f4c46894790278a0bc608574771dcc35bed466e31c04b",
+    "contract/scripts/demoScenario.js": "493ea4a55396d5e3c1871f693da0c8c227f0808a7414640cb51b9730cb152177",
+    "contract/scripts/checkWeek10Browser.cjs": "75c72866ffb2dfb8227e329cb374169b5394ffb262025a3ec0fe49506e4ce17b",
+    "frontend/app/page.tsx": "853aff168928114b976458b53d65aed254814dd306513a21c0e9f25293626cc3",
+    "frontend/lib/Voting.json": "45da59e635ad429f687efca4fe581a2ed5669d0600a373bce43c325c2ce39679",
+    "docs/reports/generate_week10_reports.py": "db1cdded1c0298e8e37a285ebaa4b7ee5622a2729fa5e31c970048255bf6881f",
+    "docs/reports/render_week10_pdfs.mjs": "dc6ee6a06dcd0d4a81eead1a44e2473d6daf7df080bce15a3ad3e60850a93220",
+    "docs/reports/week10_report.docx": "3eaec5b0e25287cf29231cccdaecc58c96ab42a4a9b9986490401655cec9931e",
+    "docs/reports/week10_report.pdf": "bdce2eadbcafe93745000b1b299efd63bd2668bb8f46a7a3ab9d412678ff0ad0",
+    "docs/reports/vulnerability_report_week10.docx": "71367ceb90d1dd569a985dc6681161acdc75332f925b3671809d622736b6fa92",
+    "docs/reports/vulnerability_report_week10.pdf": "b86afc0340098790af9222bd18a0ae6c0a217a8067d45fec251e527476ca8363",
+    "docs/evidence/week10/after-disclosure-defense.txt": "b5171fba134eebf6c9abfd3ee21e848b05b9bac7b261faf7d893bd15c1872aeb",
+    "docs/evidence/week10/after-tests.txt": "0d013578d0979441614a6fe90a3dc56cfebb0f8fb1a188c46b19d3e223a058d5",
+    "docs/evidence/week10/before-disclosure-defense.txt": "f9521849d0c1e0f0343725bd0920ba1398a90b5d0f63fc5b05a23dbea4b6cb02",
+    "docs/evidence/week10/before-outcome-defense.txt": "09e1e57e1515dde42fe965c17b921e1508c0cb897350753d26662cbabaecd662",
+    "docs/evidence/week10/before-tests.txt": "47d7a5ec94cecff35091e317035ac17062a3d16e6b9a6b3b4102ef6f3f961c51",
+    "docs/evidence/week10/browser/paused-result.png": "ca14c43b4947cae96d6ff54f9f425f6107f304947e54c9b59a9da226a054d7f2",
+    "docs/evidence/week10/browser/result.json": "279f60f8a5019be6a5b637bfd4447c69afd99437d2db3a308c3afd35da1c83b6",
+    "docs/evidence/week10/browser/tie-before-finalize.png": "cae36235f89c361a8f738d5b06b88e8a3290f305222327f3f17b9f88c455088b",
+    "docs/evidence/week10/browser/tie-result.png": "a81000bf3cd5ed5f2cd46b2ff401a86923ada2fb56aafc982bf725f299607d89",
+    "docs/evidence/week10/browser/winner-before-finalize.png": "a760ea10bb69f14d84bb6ef98655d03ac788719b0ed6b1a775ec4d0ad76626b3",
+    "docs/evidence/week10/browser/winner-result.png": "6eb1dcd94a833780196d81f1f952724ddcb3e431e6f7dc6455d36fade350da23",
+    "docs/evidence/week10/browser/zero-before-finalize.png": "17fb983c1c6fa7b56fa4ff01e593e02d296da8a771c6b51da6736585ad0444c7",
+    "docs/evidence/week10/browser/zero-result.png": "5f8c1eeb8047892dba6ffd6360aa82f30324ae804e03cc557d0a24840f3bec13",
+    "docs/evidence/week10/demo-audit-log.txt": "37c036ebf99b148a5ecf851d280d1987e72c4089b13a70193e4ed61234ebc7d6",
+    "docs/evidence/week10/document-preview/pages.json": "d0a44589f784e7e5636d61712e6bf33dba56123aa485da8db73aaba141da435b",
+    "docs/evidence/week10/document-preview/vulnerability_report_week10-1.png": "cc239c2284e58f0ab0248bdd4fef4da98741a89d3e10972772248e33a90c6a82",
+    "docs/evidence/week10/document-preview/vulnerability_report_week10-2.png": "faf8267a249f356b9ada13754893564c3259623baa806f970fb29b1038a5197e",
+    "docs/evidence/week10/document-preview/week10_report-1.png": "b7b5810a08dd0b1bc932469615db26b86aeac3cc237181fa2f447ae60c51c987",
+    "docs/evidence/week10/document-preview/week10_report-2.png": "3ee2c8a3e9ecc3b2db7675aab827f408264621fd6e081382db62ece6bc50ce40",
+    "docs/evidence/week10/document-preview/week10_report-3.png": "6cf1bfc2202455f772a45140d7d63977c325a995c6db7f73aadf97f227ff3708",
+    "contract/scripts/prepareWeek10Manual.cjs": "7cbba38ea66af67a8dc7b9d6a6b044dfe2fa09b6b20c49a68322ea8159c1e9b3",
+    "docs/evidence/week10/metamask/01-paused-unfinalized.png": "090c612eb1cc52bc530ed0c9b3cdf52a81f7bb7848b995b19e3a02551ceb939e",
+    "docs/evidence/week10/metamask/02-zero-votes-finalized.png": "040f89b4cc14a1af23596a4fe961e94177aed2722320f3f44a27340b006811e2",
+    "docs/evidence/week10/metamask/03-tie-before-finalize.png": "a0ecb07de6320f327b291304ac9d5d68361a18cf0d3ac802b6233d62c5c08468",
+    "docs/evidence/week10/metamask/04-tie-finalized.png": "be2e1325c3685199431198fa4ca1eec5c9764c5cd7238be38d57ed5ec605e694",
+    "docs/evidence/week10/metamask/archived-outcome-3.json": "96fccf1f13afc3bc9b8a0e38c49ec2e1ba001b88227f9be050a40af32b0ea314",
+    "docs/evidence/week10/metamask/nonce-alignment.json": "d47692ff4b98f9cbaa1dfd946c4c8692da000f1fd023523e3881851389bbc9a0",
+    "docs/evidence/week10/metamask/paused-check.json": "29f78dd6a480bc562c054617a0cd78c69eaeb68953e9cfcd0191fe15bb0ddc4e",
+    "docs/evidence/week10/metamask/result.json": "a993b036ab6dba86544ef86c4bd6e98c9820b2dadc4f25a272b091c8ca5adf6f",
+    "docs/evidence/week10/metamask/screenshots.json": "0dae06158ec86f2efe230797e85cf92a962b0835ba2fd66c44630850300afb42",
+    "docs/evidence/week10/metamask/tie-result.json": "10eb07615576aa1538a394a6f6dc8d80a5068253273a0b50a907a8c94944a4e2",
+    "docs/evidence/week10/metamask/tie-setup.json": "42e26495bbc926888b5541920992cb138a0c37417b147a29f0384d792b94d1ad",
+    "docs/evidence/week10/metamask/troubleshooting/nonce-too-high.png": "c446d3e618d712304677f7e7684ab1e2842954bd1b07c7b209dc5955864ebc64",
+    "docs/evidence/week10/metamask/zero-result.json": "2dd540aa9525967d4317e7330faac5164bb36de7a6d6203330d3763ab88a1d64",
+    "docs/evidence/week10/metamask/zero-resumed.json": "820557f395aaec5ee9218c4023203e9dfcbfc2f227f2e209800babb667f48b7f",
+    "docs/evidence/week10/metamask/zero-setup.json": "c85e0e1afadf3e9c1ec8befc9bb65150c72a8dade8cbdecc5feee87112c95746"
+  },
+  "manualMetaMask": {
+    "date": "2026-11-07",
+    "status": "passed",
+    "paused": {
+      "userScreenshotReviewed": true,
+      "rpcDenial": "Result not finalized"
+    },
+    "zero": {
+      "outcome": 3,
+      "winner": "",
+      "finalizeTransaction": "0x2d6cbe40f54884b7f0ea5dd75d65f1bef0db2050386a7ed077be85be67d5c20b"
+    },
+    "tie": {
+      "outcome": 2,
+      "winner": "",
+      "votes": [
+        "1",
+        "1"
+      ],
+      "finalizeTransaction": "0x862f4e3cac6abf47999d34e4c95adc5de6b02e96afa555e66ba80aca5a89f509"
+    },
+    "fixture": "Hardhat development accounts prepared elections and tied votes; actual MetaMask signed both finalize transactions",
+    "screenshotOriginals": 5,
+    "scope": "Outcome finalization and paused publication policy; no secrecy guarantee or manual vote-casting claim"
+  },
+  "verificationScope": "Application verification; commit and push status are recorded in Git history"
+}

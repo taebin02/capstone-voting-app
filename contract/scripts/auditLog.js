@@ -42,7 +42,8 @@ async function printAuditLog(voting) {
       case "VoterRegistered":  return `유권자 등록 ${short(a.voter)} (등록한 관리자 ${short(a.by)})`;
       case "CandidateAdded":   return `후보 추가 #${a.candidateIndex} ${a.name} (관리자 ${short(a.by)})`;
       case "Voted":            return `투표 ${short(a.voter)} (후보는 이벤트에 미포함; 거래 입력은 공개)`;
-      case "ResultFinalized":  return `결과 확정 - 당선자 ${a.winner} (실행 ${short(a.by)})`;
+      case "ResultFinalized":  return `결과 확정 - 당선자 ${a.winner || "없음"} (실행 ${short(a.by)})`;
+      case "ResultOutcomeFinalized": return `확정 사유: ${["미확정", "정상 당선", "동점·당선자 없음", "0표·당선자 없음"][Number(a.outcome)]} / 최다 ${a.maxVotes}표 (실행 ${short(a.by)})`;
       default:                 return "";
     }
   };

@@ -1,0 +1,64 @@
+격리 시연 배포 주소: 0x5FbDB2315678afecb367f032d93F642f64180aa3
+완료: 두 번째 관리자 추가 (부트스트랩)
+완료: 세 번째 관리자 추가 제안 (1/2)
+완료: 세 번째 관리자 추가 승인 (2/2)
+완료: 세 번째 관리자 제거 제안 (1/2)
+완료: 세 번째 관리자 제거 승인 (2/2)
+완료: 후보 A 등록
+완료: 후보 B 등록
+완료: 유권자 1 등록
+완료: 유권자 2 등록
+완료: 선거 시작 제안 (1/2)
+완료: 선거 시작 승인 (2/2)
+완료: 유권자 1 투표
+완료: 비상 정지 제안 (1/2)
+완료: 비상 정지 승인 (2/2)
+완료: 재개 제안 (1/2)
+완료: 재개 승인 (2/2)
+완료: 유권자 2 투표
+완료: 비관리자의 결과 확정
+
+=== 감사 로그 (컨트랙트 0x5FbDB2315678afecb367f032d93F642f64180aa3) ===
+시각은 블록 timestamp의 UTC 값이며, 시연에서 시간을 조작한 경우 실제 실행 시각과 다릅니다.
+블록  시각                 이벤트              내용
+----------------------------------------------------------------------------------------------------
+2     2026-11-07 05:19:01 UTC  ProposalCreated     제안 #0 [관리자 추가] 제안자 0xf39F…2266 | tx 0x1dcdbc3a51904ed6b6ae73063a54927324470d490e0ef24135ed1af64cc733ce log 0
+2     2026-11-07 05:19:01 UTC  AdminAdded          관리자 추가됨 0x7099…79C8 (제안 #0) | tx 0x1dcdbc3a51904ed6b6ae73063a54927324470d490e0ef24135ed1af64cc733ce log 1
+2     2026-11-07 05:19:01 UTC  ProposalExecuted    실행 #0 [관리자 추가] | tx 0x1dcdbc3a51904ed6b6ae73063a54927324470d490e0ef24135ed1af64cc733ce log 2
+3     2026-11-07 05:19:02 UTC  ProposalCreated     제안 #1 [관리자 추가] 제안자 0xf39F…2266 | tx 0xfd7940f273e7134837fa2b5084c03178b45533a68997f81b65188c68b39063e8 log 0
+3     2026-11-07 05:19:02 UTC  ProposalApproved    승인 #1 0xf39F…2266 (1/2) | tx 0xfd7940f273e7134837fa2b5084c03178b45533a68997f81b65188c68b39063e8 log 1
+4     2026-11-07 05:19:03 UTC  ProposalApproved    승인 #1 0x7099…79C8 (2/2) | tx 0xe12924eafa6e1d05405849d23d46f55934117196b5b85101d43bdbb972094068 log 0
+4     2026-11-07 05:19:03 UTC  AdminAdded          관리자 추가됨 0x3C44…93BC (제안 #1) | tx 0xe12924eafa6e1d05405849d23d46f55934117196b5b85101d43bdbb972094068 log 1
+4     2026-11-07 05:19:03 UTC  ProposalExecuted    실행 #1 [관리자 추가] | tx 0xe12924eafa6e1d05405849d23d46f55934117196b5b85101d43bdbb972094068 log 2
+5     2026-11-07 05:19:04 UTC  ProposalCreated     제안 #2 [관리자 제거] 제안자 0xf39F…2266 | tx 0x248dba5b7ed46cbd836276c4d867b3a55caba772b39542bae127065cae0175c3 log 0
+5     2026-11-07 05:19:04 UTC  ProposalApproved    승인 #2 0xf39F…2266 (1/2) | tx 0x248dba5b7ed46cbd836276c4d867b3a55caba772b39542bae127065cae0175c3 log 1
+6     2026-11-07 05:19:05 UTC  ProposalApproved    승인 #2 0x7099…79C8 (2/2) | tx 0x66edaa64ac1090bef74819a784202dff8601366f9850a086fc1de221f4618490 log 0
+6     2026-11-07 05:19:05 UTC  AdminRemoved        관리자 제거됨 0x3C44…93BC (제안 #2) | tx 0x66edaa64ac1090bef74819a784202dff8601366f9850a086fc1de221f4618490 log 1
+6     2026-11-07 05:19:05 UTC  ProposalExecuted    실행 #2 [관리자 제거] | tx 0x66edaa64ac1090bef74819a784202dff8601366f9850a086fc1de221f4618490 log 2
+7     2026-11-07 05:19:06 UTC  CandidateAdded      후보 추가 #0 A (관리자 0xf39F…2266) | tx 0x04ea8c33b6f78249dcfcbb9911c5b62dd5c9bd28365d97bc5d6b507b6e88390d log 0
+8     2026-11-07 05:19:07 UTC  CandidateAdded      후보 추가 #1 B (관리자 0xf39F…2266) | tx 0x931645fcff2461a6e424ae2da62e87ae40cadc43491025017b91d094354c9f21 log 0
+9     2026-11-07 05:19:08 UTC  VoterRegistered     유권자 등록 0x90F7…b906 (등록한 관리자 0xf39F…2266) | tx 0x2e68585131540b1acc6f18e7557dfd859d78c376cf5691a9a4d5b6d6fdd1d639 log 0
+10    2026-11-07 05:19:09 UTC  VoterRegistered     유권자 등록 0x15d3…6A65 (등록한 관리자 0xf39F…2266) | tx 0xab2934de2ca2fa947a667145a1b357493518350b316a9ab8ef2ce4c66d76be99 log 0
+11    2026-11-07 05:19:10 UTC  ProposalCreated     제안 #3 [선거 시작] 제안자 0xf39F…2266 | tx 0x736eab6cdf61f58259564a97e01a953a0f5144775c5b9bd68bb9efe1faaff1ce log 0
+11    2026-11-07 05:19:10 UTC  ProposalApproved    승인 #3 0xf39F…2266 (1/2) | tx 0x736eab6cdf61f58259564a97e01a953a0f5144775c5b9bd68bb9efe1faaff1ce log 1
+12    2026-11-07 05:19:11 UTC  ProposalApproved    승인 #3 0x7099…79C8 (2/2) | tx 0x666b53463b6f7d9d3c463bec10d760eabc411ac2d81f32c53944dba09404fe53 log 0
+12    2026-11-07 05:19:11 UTC  ElectionStarted     선거 시작 - 종료 예정 2026-11-07 05:21:11 UTC (제안 #3) | tx 0x666b53463b6f7d9d3c463bec10d760eabc411ac2d81f32c53944dba09404fe53 log 1
+12    2026-11-07 05:19:11 UTC  ProposalExecuted    실행 #3 [선거 시작] | tx 0x666b53463b6f7d9d3c463bec10d760eabc411ac2d81f32c53944dba09404fe53 log 2
+13    2026-11-07 05:19:12 UTC  Voted               투표 0x90F7…b906 (후보는 이벤트에 미포함; 거래 입력은 공개) | tx 0x823005d7fb5516602958812a9fb6b1954464b134ff43abb3ad775e1e56129cd6 log 0
+14    2026-11-07 05:19:13 UTC  ProposalCreated     제안 #4 [강제 종료] 제안자 0xf39F…2266 | tx 0x38a0d5b24461b8dd6913d1f78800691106350cc414af4a98a909c6beccb4e931 log 0
+14    2026-11-07 05:19:13 UTC  ProposalApproved    승인 #4 0xf39F…2266 (1/2) | tx 0x38a0d5b24461b8dd6913d1f78800691106350cc414af4a98a909c6beccb4e931 log 1
+15    2026-11-07 05:19:14 UTC  ProposalApproved    승인 #4 0x7099…79C8 (2/2) | tx 0x2256ef923a41a25dbe5bf49ec99b8abf35ddc4aca01f57e3a6f903ff1e640dd7 log 0
+15    2026-11-07 05:19:14 UTC  EmergencyStopped    강제 종료 실행 (실행을 완료한 승인자 0x7099…79C8) | tx 0x2256ef923a41a25dbe5bf49ec99b8abf35ddc4aca01f57e3a6f903ff1e640dd7 log 1
+15    2026-11-07 05:19:14 UTC  ProposalExecuted    실행 #4 [강제 종료] | tx 0x2256ef923a41a25dbe5bf49ec99b8abf35ddc4aca01f57e3a6f903ff1e640dd7 log 2
+16    2026-11-07 05:19:15 UTC  ProposalCreated     제안 #5 [선거 재개] 제안자 0xf39F…2266 | tx 0xd4b43e572d5d9497411e62fa8a35df9881bcc932f7d4a5a49277eb8398cb6669 log 0
+16    2026-11-07 05:19:15 UTC  ProposalApproved    승인 #5 0xf39F…2266 (1/2) | tx 0xd4b43e572d5d9497411e62fa8a35df9881bcc932f7d4a5a49277eb8398cb6669 log 1
+17    2026-11-07 05:19:16 UTC  ProposalApproved    승인 #5 0x7099…79C8 (2/2) | tx 0x2be7f187ae3610497d1bb126d6c09f3def9fefa7d9ce242840d4a056d1a5853c log 0
+17    2026-11-07 05:19:16 UTC  Resumed             선거 재개 실행 (실행을 완료한 승인자 0x7099…79C8) | tx 0x2be7f187ae3610497d1bb126d6c09f3def9fefa7d9ce242840d4a056d1a5853c log 1
+17    2026-11-07 05:19:16 UTC  ProposalExecuted    실행 #5 [선거 재개] | tx 0x2be7f187ae3610497d1bb126d6c09f3def9fefa7d9ce242840d4a056d1a5853c log 2
+18    2026-11-07 05:19:17 UTC  Voted               투표 0x15d3…6A65 (후보는 이벤트에 미포함; 거래 입력은 공개) | tx 0x0406e06ce0f2e8d65b00c7328db0739fc042cb73b2bd2bc13be8d4e0d39ebecf log 0
+19    2026-11-07 05:21:12 UTC  ResultFinalized     결과 확정 - 당선자 B (실행 0x90F7…b906) | tx 0x7dc451524e5f920018da2413ca296d2484247b83c2880977a26371d9f961978f log 0
+19    2026-11-07 05:21:12 UTC  ResultOutcomeFinalized  확정 사유: 정상 당선 / 최다 2표 (실행 0x90F7…b906) | tx 0x7dc451524e5f920018da2413ca296d2484247b83c2880977a26371d9f961978f log 1
+----------------------------------------------------------------------------------------------------
+총 36건: ProposalCreated 6, AdminAdded 2, ProposalExecuted 6, ProposalApproved 10, AdminRemoved 1, CandidateAdded 2, VoterRegistered 2, ElectionStarted 1, Voted 2, EmergencyStopped 1, Resumed 1, ResultFinalized 1, ResultOutcomeFinalized 1
+
+시연 검증 완료: 이벤트 13종, 당선자 B. 가상 시각을 사용한 로컬 검증입니다.

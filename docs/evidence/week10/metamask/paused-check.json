@@ -1,0 +1,12 @@
+{
+  "checkedAt": "2026-11-07T06:04:08.274Z",
+  "userPausedScreenshotReviewed": true,
+  "paused": true,
+  "finalized": false,
+  "getWinnerRejection": "Result not finalized",
+  "votes": [
+    "0",
+    "0"
+  ],
+  "scope": "Actual browser pause screen plus RPC publication policy; public vote counts remain visible"
+}

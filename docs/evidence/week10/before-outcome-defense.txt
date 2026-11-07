@@ -1,0 +1,85 @@
+
+
+  Voting - 멀티시그 / 비상정지 / 투표 무결성
+    10. [10주차 보완 검증] 동점·0표 및 결과 조회 정책
+      1) V-G 방어. 동점이면 등록 순서로 당선시키지 않고 당선자 없음으로 확정한다
+      2) V-G 방어. 모두 0표이면 첫 후보를 당선시키지 않고 투표 없음으로 확정한다
+      3) V-G 방어. 후보가 한 명이어도 0표이면 당선자가 없다
+      4) 후보 한 명이 실제 득표하면 정상 당선으로 확정된다
+      5) 앞선 후보가 동점이어도 뒤 후보가 더 많이 득표하면 단독 당선이다
+      6) 낮은 득표 후보가 있어도 최다 득표가 같으면 동점으로 기록된다
+      7) 당선자 없음도 최종 확정이며 재확정·재시작·사후 정지로 바꿀 수 없다
+      8) 確定前の結果状態はPendingで、getWinnerは拒否される
+
+
+  0 passing (947ms)
+  8 failing
+
+  1) Voting - 멀티시그 / 비상정지 / 투표 무결성
+       10. [10주차 보완 검증] 동점·0표 및 결과 조회 정책
+         V-G 방어. 동점이면 등록 순서로 당선시키지 않고 당선자 없음으로 확정한다:
+
+      AssertionError: expected 'A' to equal ''
+      + expected - actual
+
+      -A
+
+      at Context.<anonymous> (test\Voting.test.js:561:43)
+
+  2) Voting - 멀티시그 / 비상정지 / 투표 무결성
+       10. [10주차 보완 검증] 동점·0표 및 결과 조회 정책
+         V-G 방어. 모두 0표이면 첫 후보를 당선시키지 않고 투표 없음으로 확정한다:
+
+      AssertionError: Error in "ResultFinalized" event: Error in the 2nd argument assertion: expected 'A' to equal ''
+      + expected - actual
+
+      -A
+
+      at Context.<anonymous> (test\Voting.test.js:570:7)
+
+  3) Voting - 멀티시그 / 비상정지 / 투표 무결성
+       10. [10주차 보완 검증] 동점·0표 및 결과 조회 정책
+         V-G 방어. 후보가 한 명이어도 0표이면 당선자가 없다:
+     TypeError: voting.finalizedOutcome is not a function
+      at Context.<anonymous> (test\Voting.test.js:580:27)
+
+  4) Voting - 멀티시그 / 비상정지 / 투표 무결성
+       10. [10주차 보완 검증] 동점·0표 및 결과 조회 정책
+         후보 한 명이 실제 득표하면 정상 당선으로 확정된다:
+     AssertionError: Event "ResultOutcomeFinalized" doesn't exist in the contract
+      at onSuccess (node_modules\@nomicfoundation\hardhat-chai-matchers\src\internal\emit.ts:80:17)
+      at C:\Users\USER\Desktop\capstone-voting\contract\node_modules\@nomicfoundation\hardhat-chai-matchers\src\internal\emit.ts:130:20
+      at Context.<anonymous> (test\Voting.test.js:588:7)
+
+  5) Voting - 멀티시그 / 비상정지 / 투표 무결성
+       10. [10주차 보완 검증] 동점·0표 및 결과 조회 정책
+         앞선 후보가 동점이어도 뒤 후보가 더 많이 득표하면 단독 당선이다:
+     TypeError: voting.finalizedOutcome is not a function
+      at Context.<anonymous> (test\Voting.test.js:601:27)
+
+  6) Voting - 멀티시그 / 비상정지 / 투표 무결성
+       10. [10주차 보완 검증] 동점·0표 및 결과 조회 정책
+         낮은 득표 후보가 있어도 최다 득표가 같으면 동점으로 기록된다:
+     AssertionError: Event "ResultOutcomeFinalized" doesn't exist in the contract
+      at onSuccess (node_modules\@nomicfoundation\hardhat-chai-matchers\src\internal\emit.ts:80:17)
+      at C:\Users\USER\Desktop\capstone-voting\contract\node_modules\@nomicfoundation\hardhat-chai-matchers\src\internal\emit.ts:130:20
+      at Context.<anonymous> (test\Voting.test.js:612:7)
+
+  7) Voting - 멀티시그 / 비상정지 / 투표 무결성
+       10. [10주차 보완 검증] 동점·0표 및 결과 조회 정책
+         당선자 없음도 최종 확정이며 재확정·재시작·사후 정지로 바꿀 수 없다:
+
+      AssertionError: expected true to equal false
+      + expected - actual
+
+      -true
+      +false
+
+      at Context.<anonymous> (test\Voting.test.js:620:48)
+
+  8) Voting - 멀티시그 / 비상정지 / 투표 무결성
+       10. [10주차 보완 검증] 동점·0표 및 결과 조회 정책
+         確定前の結果状態はPendingで、getWinnerは拒否される:
+     TypeError: voting.finalizedOutcome is not a function
+      at Context.<anonymous> (test\Voting.test.js:633:27)
+      at processImmediate (node:internal/timers:504:21)

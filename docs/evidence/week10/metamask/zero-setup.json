@@ -1,0 +1,27 @@
+{
+  "preparedAt": "2026-11-07T06:02:13.404Z",
+  "mode": "zero",
+  "contract": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+  "bytecodeMatchesArtifact": true,
+  "setupSignedBy": "Hardhat development accounts; user MetaMask will sign finalize()",
+  "userAccounts": [
+    "0xf0E1...3242",
+    "0x5DE4...8d11",
+    "0x71Fd...c4b4",
+    "0xa32D...BB39",
+    "0x0AC2...D9EE"
+  ],
+  "userNonceContinuity": true,
+  "artificialEndTimeAdvance": false,
+  "paused": true,
+  "finalized": false,
+  "durationMinutes": 1,
+  "endTime": 1794031410,
+  "votes": [
+    "0",
+    "0"
+  ],
+  "unfinalizedLookup": "Result not finalized",
+  "expectedOutcome": 3,
+  "manualStatus": "awaiting user screenshot and finalize"
+}

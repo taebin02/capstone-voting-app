@@ -1,0 +1,49 @@
+{
+  "wallet": "Injected EIP-1193 test wallet, not MetaMask extension",
+  "virtualTime": true,
+  "network": "http://127.0.0.1:18545",
+  "scenarios": [
+    {
+      "kind": "winner",
+      "pageErrors": [],
+      "rpcErrors": [],
+      "dialogs": [],
+      "outcome": 1,
+      "winner": "후보 B",
+      "status": "passed"
+    },
+    {
+      "kind": "tie",
+      "pageErrors": [],
+      "rpcErrors": [],
+      "dialogs": [],
+      "outcome": 2,
+      "winner": "",
+      "status": "passed"
+    },
+    {
+      "kind": "zero",
+      "pageErrors": [],
+      "rpcErrors": [],
+      "dialogs": [],
+      "outcome": 3,
+      "winner": "",
+      "status": "passed"
+    },
+    {
+      "kind": "paused",
+      "pageErrors": [],
+      "rpcErrors": [],
+      "dialogs": [],
+      "unfinalizedWinnerLookup": "rejected",
+      "status": "passed"
+    }
+  ],
+  "current": {
+    "kind": "paused",
+    "pageErrors": [],
+    "rpcErrors": [],
+    "dialogs": []
+  },
+  "status": "passed"
+}

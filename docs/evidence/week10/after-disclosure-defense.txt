@@ -1,0 +1,12 @@
+Compiled 1 Solidity file successfully (evm target: paris).
+
+
+  Voting - 멀티시그 / 비상정지 / 투표 무결성
+    3. 비상 정지 (Emergency Stop)
+      √ 정지 상태에서도 확정 전 getWinner() 조회는 거부된다 (38ms)
+    10. [취약점 탐지] 아직 남아 있는 약점
+      √ No.15 방어. 외부 계정이 정지 중 미확정 선두 후보를 조회할 수 없다
+      √ No.15 방어. 관리자도 미확정 조회를 우회하지 못하며 재개 후 확정해야 공개된다 (67ms)
+
+
+  3 passing (977ms)

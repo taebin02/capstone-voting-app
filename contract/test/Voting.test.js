@@ -112,13 +112,13 @@ describe("Voting - 멀티시그 / 비상정지 / 투표 무결성", function () 
       await expect(voting.connect(voter2).vote(1)).to.be.revertedWith("Election is paused");
     });
 
-    it("정지 상태에서 getWinner()는 조회 가능하다 (컨트랙트 로직)", async function () {
+    it("정지 상태에서도 확정 전 getWinner() 조회는 거부된다", async function () {
       await startRunningElection();
       await voting.connect(voter1).vote(1);
       const id = await voting.getProposalCount();
       await voting.connect(owner).propose(EmergencyStop, ZERO, 0);
       await voting.connect(admin2).approve(id);
-      expect(await voting.getWinner()).to.equal("B");
+      await expect(voting.getWinner()).to.be.revertedWith("Result not finalized");
     });
 
     it("재개(Resume)도 2명 승인이 필요하고, 재개 후 다시 투표할 수 있다", async function () {
@@ -541,25 +541,126 @@ describe("Voting - 멀티시그 / 비상정지 / 투표 무결성", function () 
     });
   });
 
-  // 통과 = 남은 취약점 존재 확인. V-G·No.15는 10주차 보완 대상으로 유지한다.
-  describe("10. [취약점 탐지] 아직 남아 있는 약점", function () {
-    it("V-G. 동점이면 후보 등록 순서가 앞선 후보가 자동으로 당선자가 된다", async function () {
+  describe("10. [10주차 보완 검증] 동점·0표 및 결과 조회 정책", function () {
+    const Winner = 1, Tie = 2, NoVotes = 3;
+    async function startCustomElection(names, voters) {
+      await setupTwoAdmins();
+      for (const name of names) await voting.addCandidate(name, "회장", "공약");
+      for (const voter of voters) await voting.registerVoter(voter.address);
+      const id = await voting.getProposalCount();
+      await voting.propose(StartElection, ZERO, 1);
+      await voting.connect(admin2).approve(id);
+    }
+
+    it("V-G 방어. 동점이면 등록 순서로 당선시키지 않고 당선자 없음으로 확정한다", async function () {
       await startRunningElection(1);
       await voting.connect(voter1).vote(1); // B 1표
       await voting.connect(voter2).vote(0); // A 1표
       await time.increase(61);
       await voting.finalize();
-      expect(await voting.getWinner()).to.equal("A");          // 취약: 동점 처리 규칙이 없어 등록 순서(A)가 결과를 좌우
+      expect(await voting.getWinner()).to.equal("");
+      expect(await voting.finalizedOutcome()).to.equal(Tie);
+      expect(await voting.finalized()).to.equal(true);
     });
 
-    it("No.15. 비상 정지 중에는 확정 전인데도 아무나 현재 집계의 선두 후보를 조회할 수 있다", async function () {
+    it("V-G 방어. 모두 0표이면 첫 후보를 당선시키지 않고 투표 없음으로 확정한다", async function () {
+      await startRunningElection(1);
+      await time.increase(61);
+      const tx = voting.finalize();
+      await expect(tx).to.emit(voting, "ResultFinalized").withArgs(owner.address, "", anyValue);
+      await expect(tx).to.emit(voting, "ResultOutcomeFinalized").withArgs(owner.address, NoVotes, 0, anyValue);
+      expect(await voting.getWinner()).to.equal("");
+      expect(await voting.finalizedOutcome()).to.equal(NoVotes);
+    });
+
+    it("V-G 방어. 후보가 한 명이어도 0표이면 당선자가 없다", async function () {
+      await startCustomElection(["A"], []);
+      await time.increase(61);
+      await voting.finalize();
+      expect(await voting.finalizedOutcome()).to.equal(NoVotes);
+      expect(await voting.getWinner()).to.equal("");
+    });
+
+    it("후보 한 명이 실제 득표하면 정상 당선으로 확정된다", async function () {
+      await startCustomElection(["A"], [voter1]);
+      await voting.connect(voter1).vote(0);
+      await time.increase(61);
+      await expect(voting.finalize()).to.emit(voting, "ResultOutcomeFinalized").withArgs(owner.address, Winner, 1, anyValue);
+      expect(await voting.finalizedOutcome()).to.equal(Winner);
+      expect(await voting.getWinner()).to.equal("A");
+    });
+
+    it("앞선 후보가 동점이어도 뒤 후보가 더 많이 득표하면 단독 당선이다", async function () {
+      await startCustomElection(["A", "B", "C"], [voter1, voter2, outsider, owner]);
+      await voting.connect(voter1).vote(0);
+      await voting.connect(voter2).vote(1);
+      await voting.connect(outsider).vote(2);
+      await voting.connect(owner).vote(2);
+      await time.increase(61);
+      await voting.finalize();
+      expect(await voting.finalizedOutcome()).to.equal(Winner);
+      expect(await voting.getWinner()).to.equal("C");
+    });
+
+    it("낮은 득표 후보가 있어도 최다 득표가 같으면 동점으로 기록된다", async function () {
+      await startCustomElection(["A", "B", "C"], [voter1, voter2, outsider, owner]);
+      await voting.connect(voter1).vote(0);
+      await voting.connect(voter2).vote(0);
+      await voting.connect(outsider).vote(1);
+      await voting.connect(owner).vote(1);
+      await time.increase(61);
+      await expect(voting.finalize()).to.emit(voting, "ResultOutcomeFinalized").withArgs(owner.address, Tie, 2, anyValue);
+      expect(await voting.getWinner()).to.equal("");
+    });
+
+    it("당선자 없음도 최종 확정이며 재확정·재시작·사후 정지로 바꿀 수 없다", async function () {
+      await startRunningElection(1);
+      await time.increase(61);
+      await voting.connect(outsider).finalize();
+      expect(await voting.electionActive()).to.equal(false);
+      await expect(voting.finalize()).to.be.revertedWith("Already finalized");
+      let id = await voting.getProposalCount();
+      await voting.propose(StartElection, ZERO, 1);
+      await expect(voting.connect(admin2).approve(id)).to.be.revertedWith("Election already finalized");
+      id = await voting.getProposalCount();
+      await voting.propose(EmergencyStop, ZERO, 0);
+      await expect(voting.connect(admin2).approve(id)).to.be.revertedWith("Election not active");
+      expect(await voting.finalizedOutcome()).to.equal(NoVotes);
+      expect(await voting.connect(outsider).getWinner()).to.equal("");
+    });
+
+    it("확정 전 결과 상태는 Pending이며 getWinner 조회는 거부된다", async function () {
+      expect(await voting.finalizedOutcome()).to.equal(0);
+      await expect(voting.getWinner()).to.be.revertedWith("Result not finalized");
+    });
+
+    it("No.15 방어. 외부 계정이 정지 중 미확정 선두 후보를 조회할 수 없다", async function () {
       await startRunningElection();
       await voting.connect(voter1).vote(1);
       const id = await voting.getProposalCount();
       await voting.connect(owner).propose(EmergencyStop, ZERO, 0);
       await voting.connect(admin2).approve(id);
       expect(await voting.finalized()).to.equal(false);
-      expect(await voting.connect(outsider).getWinner()).to.equal("B"); // 취약: 확정 전·정지 중인데 집계가 노출됨 (화면에서만 숨김)
+      await expect(voting.connect(outsider).getWinner()).to.be.revertedWith("Result not finalized");
+    });
+
+    it("No.15 방어. 관리자도 미확정 조회를 우회하지 못하며 재개 후 확정해야 공개된다", async function () {
+      await startRunningElection(1);
+      await voting.connect(voter1).vote(1);
+      let id = await voting.getProposalCount();
+      await voting.propose(EmergencyStop, ZERO, 0);
+      await voting.connect(admin2).approve(id);
+      for (const caller of [owner, admin2, voter1, outsider]) {
+        await expect(voting.connect(caller).getWinner()).to.be.revertedWith("Result not finalized");
+      }
+      id = await voting.getProposalCount();
+      await voting.propose(Resume, ZERO, 0);
+      await voting.connect(admin2).approve(id);
+      await expect(voting.getWinner()).to.be.revertedWith("Result not finalized");
+      await time.increase(61);
+      await expect(voting.getWinner()).to.be.revertedWith("Result not finalized");
+      await voting.connect(outsider).finalize();
+      expect(await voting.connect(outsider).getWinner()).to.equal("B");
     });
   });
 });

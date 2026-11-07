@@ -1,0 +1,15 @@
+{
+  "checkedAt": "2026-11-07T06:06:07.543Z",
+  "scope": "local Hardhat test wallet only",
+  "account": "0xf0E1...3242",
+  "observedError": "Expected nonce 0 but got 3",
+  "nonceBefore": 0,
+  "nonceAfter": 3,
+  "method": "hardhat_setNonce aligns local test fixture with wallet history",
+  "finalized": false,
+  "paused": false,
+  "votes": [
+    "0",
+    "0"
+  ]
+}

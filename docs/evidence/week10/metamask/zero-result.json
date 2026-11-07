@@ -1,0 +1,17 @@
+{
+  "checkedAt": "2026-11-07T06:07:04.654Z",
+  "scenario": "zero",
+  "userScreenshotReviewed": true,
+  "status": "passed",
+  "finalized": true,
+  "outcome": 3,
+  "winner": "",
+  "votes": [
+    "0",
+    "0"
+  ],
+  "finalizeTransaction": "0x2d6cbe40f54884b7f0ea5dd75d65f1bef0db2050386a7ed077be85be67d5c20b",
+  "finalizeSigner": "0xf0E1...3242",
+  "finalizeNonce": 3,
+  "policy": "Zero votes finalize without a winner"
+}

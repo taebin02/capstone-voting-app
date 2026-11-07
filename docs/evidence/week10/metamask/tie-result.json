@@ -1,0 +1,17 @@
+{
+  "checkedAt": "2026-11-07T06:11:00.013Z",
+  "scenario": "tie",
+  "userScreenshotReviewed": true,
+  "status": "passed",
+  "finalized": true,
+  "outcome": 2,
+  "winner": "",
+  "votes": [
+    "1",
+    "1"
+  ],
+  "finalizeTransaction": "0x862f4e3cac6abf47999d34e4c95adc5de6b02e96afa555e66ba80aca5a89f509",
+  "finalizeSigner": "0xf0E1...3242",
+  "finalizeNonce": 4,
+  "fixture": "Hardhat development accounts cast one vote each; actual MetaMask signed finalize"
+}

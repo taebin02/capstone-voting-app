@@ -25,6 +25,9 @@ contract Voting {
     // ============================================
     bool public finalized;
     string public finalizedWinner;
+    // 빈 당선자 이름만으로 동점·0표를 구분하지 않도록 결과 사유를 별도로 저장한다.
+    enum ResultOutcome { Pending, Winner, Tie, NoVotes }
+    ResultOutcome public finalizedOutcome;
 
     Candidate[] public candidates;
     mapping(address => bool) public hasVoted;
@@ -33,6 +36,7 @@ contract Voting {
     event EmergencyStopped(address indexed by, uint timestamp);
     event Resumed(address indexed by, uint timestamp);
     event ResultFinalized(address indexed by, string winner, uint timestamp);
+    event ResultOutcomeFinalized(address indexed by, ResultOutcome outcome, uint maxVotes, uint timestamp);
 
     // ============================================
     // [8주차 보완 - 이벤트 로깅 확대, 진단 No.5]
@@ -231,31 +235,39 @@ contract Voting {
         require(endTime != 0, "Election not started");
         require(block.timestamp > endTime, "Election still active");
         require(candidates.length > 0, "No candidates");
-        finalizedWinner = _computeWinner();
+        uint maxVotes;
+        (finalizedOutcome, finalizedWinner, maxVotes) = _computeOutcome();
         finalized = true;
+        electionActive = false;
         emit ResultFinalized(msg.sender, finalizedWinner, block.timestamp);
+        emit ResultOutcomeFinalized(msg.sender, finalizedOutcome, maxVotes, block.timestamp);
     }
 
     // 당선자 조회
     // - 확정된 뒤: 저장된 값을 그대로 반환 (시간·블록과 무관)
-    // - 확정 전: 비상 정지 상태일 때만 현재까지의 집계를 반환 (화면은 이를 공개하지 않음),
-    //            그 외에는 거부
+    //   동점·0표는 빈 문자열. 사유는 finalizedOutcome으로 구분한다.
+    // - 확정 전: 진행·정지·종료 여부와 관계없이 조회 거부 (10주차 No.15 보완)
+    // 후보별 득표와 거래 입력은 별도로 공개되므로 투표 비밀성을 보장하는 조치는 아니다.
     function getWinner() public view returns (string memory) {
-        if (finalized) return finalizedWinner;
-        require(paused, "Result not finalized");
-        require(candidates.length > 0, "No candidates");
-        return _computeWinner();
+        require(finalized, "Result not finalized");
+        return finalizedWinner;
     }
 
-    function _computeWinner() internal view returns (string memory) {
+    function _computeOutcome() internal view returns (ResultOutcome, string memory, uint) {
         uint maxVotes = 0;
         uint winnerIndex = 0;
+        bool tied = false;
         for (uint i = 0; i < candidates.length; i++) {
             if (candidates[i].voteCount > maxVotes) {
                 maxVotes = candidates[i].voteCount;
                 winnerIndex = i;
+                tied = false;
+            } else if (candidates[i].voteCount == maxVotes) {
+                tied = true;
             }
         }
-        return candidates[winnerIndex].name;
+        if (maxVotes == 0) return (ResultOutcome.NoVotes, "", 0);
+        if (tied) return (ResultOutcome.Tie, "", maxVotes);
+        return (ResultOutcome.Winner, candidates[winnerIndex].name, maxVotes);
     }
 }

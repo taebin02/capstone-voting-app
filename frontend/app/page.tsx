@@ -18,6 +18,8 @@ export default function Home() {
   const [winner, setWinner] = useState("");
   // [결과 확정] 컨트랙트의 finalize()로 당선자가 체인에 저장됐는지 여부
   const [finalized, setFinalized] = useState(false);
+  // 0: 미확정, 1: 정상 당선, 2: 동점, 3: 투표 없음 (컨트랙트 enum과 동일)
+  const [finalizedOutcome, setFinalizedOutcome] = useState(0);
   const [finalizing, setFinalizing] = useState(false);
   // [멀티시그] 제안 목록과 관리자 수. 비상 관리/선거 시작 버튼이 모두
   // propose()로 바뀌었으므로, 화면에 "대기 중인 제안"을 보여줘야 함.
@@ -63,11 +65,15 @@ export default function Home() {
       const f = await contract.finalized();
       setFinalized(f);
       if (f) {
-        setWinner(await contract.getWinner());
+        const [outcome, name] = await Promise.all([contract.finalizedOutcome(), contract.getWinner()]);
+        setFinalizedOutcome(Number(outcome));
+        setWinner(name);
       } else {
+        setFinalizedOutcome(0);
         setWinner("");
       }
     } catch (e) {
+      setFinalizedOutcome(0);
       setWinner("");
     }
   };
@@ -341,18 +347,25 @@ export default function Home() {
             {remainingTime === "투표 종료" && !finalized && (
               <div style={{ marginTop: 24, background: "#FFFBEB", borderRadius: 12, padding: 24, textAlign: "center", border: "1px solid #FDE68A" }}>
                 <div style={{ fontSize: 18, fontWeight: 600, color: "#92400E", marginBottom: 8 }}>투표가 종료되었습니다</div>
-                <div style={{ fontSize: 14, color: "#78350F", marginBottom: 16 }}>결과를 확정하면 당선자가 공개됩니다 (누구나 확정할 수 있습니다)</div>
+                <div style={{ fontSize: 14, color: "#78350F", marginBottom: 16 }}>결과를 확정하면 최종 결과가 공개됩니다. 동점·0표는 당선자 없음으로 기록됩니다 (누구나 확정할 수 있습니다)</div>
                 <button onClick={finalizeResult} disabled={finalizing}
                   style={{ background: "#7C3AED", color: "#fff", border: "none", borderRadius: 8, padding: "10px 20px", cursor: finalizing ? "not-allowed" : "pointer", fontSize: 14, fontWeight: 500 }}>
                   {finalizing ? "처리 중..." : "결과 확정"}
                 </button>
               </div>
             )}
-            {winner && finalized && remainingTime === "투표 종료" && (
+            {finalizedOutcome === 1 && finalized && remainingTime === "투표 종료" && (
               <div style={{ marginTop: 24, background: "#EDE9FE", borderRadius: 12, padding: 24, textAlign: "center", border: "1px solid #DDD6FE" }}>
                 <div style={{ fontSize: 18, fontWeight: 600, color: "#5B21B6", marginBottom: 8 }}>🏆 최종 당선자</div>
-                <div style={{ fontSize: 32, fontWeight: 700, color: "#111827" }}>{winner}</div>
+                <div style={{ fontSize: 32, fontWeight: 700, color: "#111827" }}>{winner || "이름 없는 후보"}</div>
                 <div style={{ fontSize: 12, color: "#6B7280", marginTop: 8 }}>체인에 확정된 결과입니다</div>
+              </div>
+            )}
+            {finalized && (finalizedOutcome === 2 || finalizedOutcome === 3) && remainingTime === "투표 종료" && (
+              <div style={{ marginTop: 24, background: "#FFFBEB", borderRadius: 12, padding: 24, textAlign: "center", border: "1px solid #FDE68A" }}>
+                <div style={{ fontSize: 18, fontWeight: 600, color: "#92400E", marginBottom: 8 }}>최종 결과: 당선자 없음</div>
+                <div style={{ fontSize: 16, color: "#78350F" }}>{finalizedOutcome === 2 ? "최다 득표가 동점입니다." : "투표가 한 표도 없습니다."}</div>
+                <div style={{ fontSize: 12, color: "#6B7280", marginTop: 8 }}>체인에 확정된 결과입니다. 재선거는 새 선거를 준비해 진행합니다.</div>
               </div>
             )}
             {remainingTime === "강제 종료됨" && (
