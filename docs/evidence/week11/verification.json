@@ -1,0 +1,87 @@
+{
+  "date": "2026-11-13",
+  "baselineCommit": "55b7079d0112cb5920a2f67164b59c934199888e",
+  "userDecision": "Document current privacy exposure and key management; defer anonymous voting implementation",
+  "applicationCodeChanged": false,
+  "dependenciesChanged": false,
+  "handoverChanged": false,
+  "validation": {
+    "regression": {
+      "command": "cd contract; node node_modules/hardhat/internal/cli/cli.js test test/Voting.test.js",
+      "passing": 65
+    },
+    "riskObservations": {
+      "command": "cd contract; node node_modules/hardhat/internal/cli/cli.js run scripts/checkWeek11Risks.cjs",
+      "confirmed": 8,
+      "meaning": "Risk reproduction plus existing-control checks, not 8 new defense tests or fixes"
+    },
+    "realUserKeysUsed": false,
+    "realMetaMaskTest": false,
+    "localhostChainReset": false
+  },
+  "reports": {
+    "week11_report": 3,
+    "security_guide_week11": 2,
+    "vulnerability_report_week11": 2,
+    "pdfExport": "Microsoft Word",
+    "visualReview": true
+  },
+  "issueStatus": {
+    "resolved": 12,
+    "partial": 1,
+    "residual": 2,
+    "residualIds": [
+      6,
+      7
+    ],
+    "documentationComplete": true,
+    "privacyRiskTechnicallyFixed": false,
+    "keyTheftRiskTechnicallyFixed": false
+  },
+  "sources": [
+    {
+      "title": "Solidity 0.8.24 Security Considerations",
+      "url": "https://docs.soliditylang.org/en/v0.8.24/security-considerations.html#private-information-and-randomness",
+      "accessed": "2026-11-13"
+    },
+    {
+      "title": "MetaMask basic security tips",
+      "url": "https://support.metamask.io/stay-safe/safety-in-web3/basic-safety-and-security-tips-for-metamask",
+      "accessed": "2026-11-13"
+    },
+    {
+      "title": "Semaphore overview",
+      "url": "https://docs.semaphore.pse.dev/",
+      "accessed": "2026-11-13"
+    }
+  ],
+  "notPerformed": [
+    "Weekly report submission",
+    "Actual backup recovery drill",
+    "Anonymous voting implementation"
+  ],
+  "sha256": {
+    "contract/contracts/Voting.sol": "911923d5ec9f93de4e8613aa092b56cf7af01cda5fdefeee032c5a6f23b245de",
+    "contract/scripts/checkWeek11Risks.cjs": "c06d2de6d164c1bb22079af3dfe9d22aa1f2a773450bf153f48f4c2109cf9c2f",
+    "contract/test/Voting.test.js": "446f58f39076fb826cad00c6ca9a29c16bd0857dc84d892ab29b1a0fb471ba51",
+    "docs/evidence/week11/document-preview/pages.json": "5dc806e2388f0c160c404537d05c7d308742ae35d5b0fcadaf41145031ba5065",
+    "docs/evidence/week11/document-preview/security_guide_week11-1.png": "1c4eb553d69c9390927f124cafe86e9c34842942db91b734d0542d9c75aafcbc",
+    "docs/evidence/week11/document-preview/security_guide_week11-2.png": "bbcdccee02975adb378d88eae8efbb5f3039d91b911214234cedba3f36f9039e",
+    "docs/evidence/week11/document-preview/vulnerability_report_week11-1.png": "954d10ab5fd6a2d56278dae609190a53ed369590479e3b890785a06cbe7eb3bd",
+    "docs/evidence/week11/document-preview/vulnerability_report_week11-2.png": "fa08948f49c22f0dea71b086585b6bc3b05494b4f793e98338c2c6f48d157e52",
+    "docs/evidence/week11/document-preview/week11_report-1.png": "cda0216077126b2be6d67da4c35f063b6449a3bd10b542063237ab85958d5f08",
+    "docs/evidence/week11/document-preview/week11_report-2.png": "975a3fbf8e1093797dbcd2af56c5fb0a8a1d26f602b88dce30f98b4697015de3",
+    "docs/evidence/week11/document-preview/week11_report-3.png": "cb3b95bb3147d85a9426ae634e1df188d4932ead41cd925d6cf07d8966c31cc4",
+    "docs/evidence/week11/regression-tests.txt": "4e90285765977e9d1915b39836068a1ad698482b93d923a0552b7c11e0f5e954",
+    "docs/evidence/week11/risk-observations.json": "f3e0fd6b193521fd06d839bc843b3231832a1f6beeda45cdfe3130e72cb28fca",
+    "docs/reports/generate_week11_reports.py": "90c79422c48650851fcd078fa4339b0b153c3abd344d70eca96e4052fb5fff3c",
+    "docs/reports/render_week11_pdfs.mjs": "b68f28096214eb71d9d55203fa9d0fd81202bc4e19dffc56a1e9ad03dfb76a5e",
+    "docs/reports/security_guide_week11.docx": "47db7828bff63432816f399094a418ad109adbe3053f1775589454ec054aba96",
+    "docs/reports/security_guide_week11.pdf": "b2d2fae15c790d3fd97a8d91a95d2b4709a5a5c66454af185dab2ccea20bdf88",
+    "docs/reports/vulnerability_report_week11.docx": "6eba26c0868c84954d96deb2207e9af89f083b8bbbf233564960c3b3332a7d48",
+    "docs/reports/vulnerability_report_week11.pdf": "db086fde4210f170108ec143853659ac856fb2afc9d7236ada7c91c405f250d5",
+    "docs/reports/week11_content.json": "c962e1d07e4b894a18027a459ae7fbb3c588e7a5249ff5d9c43b1352146c46a1",
+    "docs/reports/week11_report.docx": "de6e01c2c93dc22f44b8e00d864c8f44a097e2a962bc5387f619e27846c4d7ec",
+    "docs/reports/week11_report.pdf": "103afe671942aa8cec4c671b0c654a8c2b017d3729f8934881392c50aef9835d"
+  }
+}

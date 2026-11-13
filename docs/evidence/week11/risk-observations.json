@@ -1,0 +1,66 @@
+{
+  "date": "2026-11-13",
+  "network": "isolated hardhat memory network",
+  "fixture": "Fresh disposable key; copied only in memory. No real user keys or wallet used.",
+  "classification": "Diagnostic observations plus existing-control checks; success is NOT a vulnerability fix",
+  "checks": [
+    {
+      "name": "No.6: transaction sender and vote input reveal address-choice link",
+      "status": "confirmed",
+      "transaction": "0x89f3f75af4ce67b881c021e7a6181b1b5fc1622165556da2ef50a158dfcab14a",
+      "from": "0x39B684D045E84b7af0a63a15b172A4F5e3e0bDb8",
+      "input": "0x0121b93f0000000000000000000000000000000000000000000000000000000000000001",
+      "candidateIndex": "1",
+      "candidateName": "B"
+    },
+    {
+      "name": "No.6: outsider can read participation, registration and live tally",
+      "status": "confirmed",
+      "hasVoted": true,
+      "registered": true,
+      "candidateBVotes": "1"
+    },
+    {
+      "name": "No.6: Voted omits choice but still exposes participation",
+      "status": "confirmed",
+      "eventArguments": [
+        "voter",
+        "timestamp"
+      ]
+    },
+    {
+      "name": "No.7: holder of copied key can consume the legitimate voter vote",
+      "status": "confirmed",
+      "copiedKeyVoteAccepted": true,
+      "legitimateSecondVote": "Already voted",
+      "keySaved": false
+    },
+    {
+      "name": "No.7: one compromised administrator cannot immediately execute emergency stop",
+      "status": "confirmed",
+      "approvals": "1/2",
+      "executed": false
+    },
+    {
+      "name": "No.15 boundary: paused winner query denied while public tally remains readable",
+      "status": "confirmed",
+      "winnerQuery": "Result not finalized",
+      "candidateBVotes": "1"
+    },
+    {
+      "name": "No.7 response: two healthy administrators remove non-original compromised admin and add replacement",
+      "status": "confirmed",
+      "compromisedAdmin": false,
+      "newProposalDenied": "Only admin",
+      "replacementAdmin": true,
+      "scope": "New proposals only; this does not invalidate prior approvals or reverse the vote"
+    },
+    {
+      "name": "No.3 boundary: other two admins can operate but cannot revoke original admin",
+      "status": "confirmed",
+      "resumeWithoutOriginal": true,
+      "originalRemoval": "Cannot remove original admin"
+    }
+  ],
+  "total": 8
+}
