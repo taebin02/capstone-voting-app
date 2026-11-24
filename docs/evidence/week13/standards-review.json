@@ -1,0 +1,116 @@
+{
+  "reviewedAt": "2026-11-24",
+  "sources": [
+    "https://scs.owasp.org/sctop10/",
+    "https://learn.microsoft.com/en-us/azure/security/develop/threat-modeling-tool-threats"
+  ],
+  "correction": "Earlier weekly tables mixed the 2026 year with 2025-like identifiers. Logic is SC02 in 2026, while SC03 is oracle manipulation and SC10 is proxy/upgradeability. DoS is not a standalone 2026 Top 10 item.",
+  "scope": "Version/category correction, not a claim of retrospective full coverage or an official certification. Prior reports preserved.",
+  "crosswalk": [
+    {
+      "id": 1,
+      "legacyLabel": "SC10",
+      "owasp2026": "Top 10 직접 대응 없음",
+      "stride": "D",
+      "mappingIsProjectAssessment": true
+    },
+    {
+      "id": 2,
+      "legacyLabel": "SC03",
+      "owasp2026": "SC02 (애플리케이션 로직에 대한 자체 대응)",
+      "stride": "D",
+      "mappingIsProjectAssessment": true
+    },
+    {
+      "id": 3,
+      "legacyLabel": "SC01",
+      "owasp2026": "SC01 인접 (권한 회수 설계)",
+      "stride": "D, E",
+      "mappingIsProjectAssessment": true
+    },
+    {
+      "id": 4,
+      "legacyLabel": "SC01",
+      "owasp2026": "SC01",
+      "stride": "E, T",
+      "mappingIsProjectAssessment": true
+    },
+    {
+      "id": 5,
+      "legacyLabel": "로깅",
+      "owasp2026": "Top 10 직접 대응 없음",
+      "stride": "R, T",
+      "mappingIsProjectAssessment": true
+    },
+    {
+      "id": 6,
+      "legacyLabel": "프라이버시",
+      "owasp2026": "Top 10 직접 대응 없음",
+      "stride": "I",
+      "mappingIsProjectAssessment": true
+    },
+    {
+      "id": 7,
+      "legacyLabel": "SC01 인접",
+      "owasp2026": "SC01 인접 (계정·운영 위험)",
+      "stride": "S, E",
+      "mappingIsProjectAssessment": true
+    },
+    {
+      "id": 8,
+      "legacyLabel": "SC01",
+      "owasp2026": "SC01 + SC02",
+      "stride": "T, E",
+      "mappingIsProjectAssessment": true
+    },
+    {
+      "id": 9,
+      "legacyLabel": "SC01",
+      "owasp2026": "SC01 + SC02",
+      "stride": "T",
+      "mappingIsProjectAssessment": true
+    },
+    {
+      "id": 10,
+      "legacyLabel": "SC03",
+      "owasp2026": "SC02 + SC05",
+      "stride": "T, D",
+      "mappingIsProjectAssessment": true
+    },
+    {
+      "id": 11,
+      "legacyLabel": "SC01+SC03",
+      "owasp2026": "SC01 + SC02",
+      "stride": "E, T",
+      "mappingIsProjectAssessment": true
+    },
+    {
+      "id": 12,
+      "legacyLabel": "SC03",
+      "owasp2026": "SC02",
+      "stride": "T",
+      "mappingIsProjectAssessment": true
+    },
+    {
+      "id": 13,
+      "legacyLabel": "SC03",
+      "owasp2026": "SC02 + SC05",
+      "stride": "D",
+      "mappingIsProjectAssessment": true
+    },
+    {
+      "id": 14,
+      "legacyLabel": "SC03",
+      "owasp2026": "SC02",
+      "stride": "T",
+      "mappingIsProjectAssessment": true
+    },
+    {
+      "id": 15,
+      "legacyLabel": "정보 공개",
+      "owasp2026": "Top 10 직접 대응 없음 (공개 정책)",
+      "stride": "I",
+      "mappingIsProjectAssessment": true
+    }
+  ]
+}
