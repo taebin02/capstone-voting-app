@@ -1,0 +1,42 @@
+{
+  "date": "2026-11-24",
+  "actualSepolia": false,
+  "wallet": "Injected EIP-1193 test wallet, not actual MetaMask",
+  "configCases": [
+    "default local",
+    "Sepolia explicit address",
+    "unsupported chain",
+    "missing Sepolia address",
+    "invalid address",
+    "zero address"
+  ],
+  "browserCases": [
+    {
+      "mode": "wrong-chain",
+      "status": "passed",
+      "dialogs": [
+        "연결 오류: 연결된 체인이 설정과 일치하지 않습니다."
+      ],
+      "pageErrors": [],
+      "transactionSent": false
+    },
+    {
+      "mode": "no-code",
+      "status": "passed",
+      "dialogs": [
+        "연결 오류: 설정한 주소에 컨트랙트가 없습니다. 배포 주소를 확인해주세요."
+      ],
+      "pageErrors": [],
+      "transactionSent": false
+    },
+    {
+      "mode": "normal",
+      "status": "passed",
+      "dialogs": [],
+      "pageErrors": [],
+      "transactionSent": true
+    }
+  ],
+  "virtualTime": true,
+  "status": "passed"
+}

@@ -1,0 +1,118 @@
+{
+  "date": "2026-11-24",
+  "baselineCommit": "d0cbbc436c52b05999067ca2e46a87e6370d0728",
+  "userDecision": "Prepare deployment and verify locally; no dedicated Sepolia wallet, test ETH or RPC configured",
+  "scope": "Testnet readiness, local end-to-end verification and final report evidence navigation",
+  "actualSepoliaDeployment": false,
+  "actualMetaMaskTestThisWeek": false,
+  "realUserKeysUsed": false,
+  "contractChanged": false,
+  "abiChanged": false,
+  "handoverChanged": false,
+  "dependenciesChanged": false,
+  "checks": {
+    "regressionPassing": 65,
+    "deploymentCases": 8,
+    "frontendConfigCases": 6,
+    "browserCases": 3,
+    "typeScriptExitCode": 0,
+    "persistentReceiptOnOwnedLocalRPC": true,
+    "evidenceItems": 15,
+    "existingReferencesChecked": 18
+  },
+  "localEnvironment": {
+    "deploymentUnitChecks": "isolated hardhat memory chain",
+    "browserRPCPort": 28545,
+    "frontendPort": 3002,
+    "wallet": "injected EIP-1193 test wallet",
+    "virtualTime": true,
+    "user8545ChainReset": false
+  },
+  "reports": {
+    "weeklyPages": 3,
+    "easyExplanationPages": 3,
+    "deploymentGuidePages": 2,
+    "evidenceIndexPages": 3,
+    "diagnosisSummaryPages": 2,
+    "wordPdfExport": true,
+    "visualReview": true
+  },
+  "statusCounts": {
+    "resolved": 12,
+    "partial": 1,
+    "residual": 2
+  },
+  "notPerformed": [
+    "Public Sepolia deployment",
+    "Explorer receipt verification on public testnet",
+    "Actual MetaMask testnet flow",
+    "Weekly report submission"
+  ],
+  "previousWeekSubmission": "Week11 report submitted, confirmed by user on 2026-11-17",
+  "sources": [
+    {
+      "url": "https://ethereum.org/developers/docs/networks/",
+      "accessed": "2026-11-24"
+    },
+    {
+      "url": "https://v2.hardhat.org/hardhat-runner/docs/config",
+      "accessed": "2026-11-24"
+    },
+    {
+      "url": "https://docs.openzeppelin.com/contracts/5.x/learn/connecting-to-public-test-networks",
+      "accessed": "2026-11-24"
+    }
+  ],
+  "sha256": {
+    ".gitignore": "9e78d3944b189dd049be2b926c77f86eef7bf63574b6bd8dae9a304c0efc19ce",
+    "contract/.env.example": "21d5b5b026d3006ca75d5b891206c3c560601a550499cb7f55aec5a00823b68e",
+    "contract/deployments/31337/0xbff21b03a9214bdb0b5a059a112dae319bdeddff8b483470e56a2cf853afc037.json": "fc5e3056679f27455209ba840ac684d9ad0607fd97764a9654b25f414743edf6",
+    "contract/hardhat.config.js": "9932fa5d691b0788a2a8d5dfdaeef22b32560b119eda6cc6d065d0a48bd672f2",
+    "contract/lib/deployment.cjs": "0400d25bdbcaec0f305eb08bf82a8051c45fe01aa1afad27e97185e823cc6ad0",
+    "contract/lib/deploymentConfig.cjs": "2fcfe219d73ae8d369fc7b4fb8a349f2a85e45564f4a3f3a360952cacd5ccf59",
+    "contract/scripts/checkWeek12Deployment.cjs": "ad12290ad252dfc62ae04fcf68bf03b25c0bde3f1630de2b53f549cca4a62fb2",
+    "contract/scripts/checkWeek12Frontend.cjs": "1986fb3976395b98bbf90b539ed0a1b2273c986b7dfbaeb608364f1e099195c9",
+    "contract/scripts/deploy.js": "e32aefdd2f5e7e5a55bda39defa2cd824c49e5ee9e97a71b5e52a279be443d72",
+    "contract/scripts/preflight.cjs": "2aa4994dfb00714c6f44eea58b92fa6a60f171465a1258c371235c6d60e3d83c",
+    "docs/evidence/week12/browser/no-code.png": "13073cf34941889987d4d6cc3df207c0acc796dec13f3779d188c121ef617ff6",
+    "docs/evidence/week12/browser/normal-voted.png": "cca4d2f368c1f7289c7ff34ec19805876483bb33a32358d132d63987a94f1376",
+    "docs/evidence/week12/browser/normal.png": "97d531a98af11122260d56b15e673c02d323756a8d2f0b828d9b106fc5e2b0df",
+    "docs/evidence/week12/browser/result.json": "459bc45bc9956215ce328b1d5a69fdc1061fc3a77035ba5c6e4c84f1418b6e6e",
+    "docs/evidence/week12/browser/wrong-chain.png": "13073cf34941889987d4d6cc3df207c0acc796dec13f3779d188c121ef617ff6",
+    "docs/evidence/week12/deployment-check.json": "4a2700be11f7eac68663ceccc1f41bdbb25768757ddb354f39f323af23de6a47",
+    "docs/evidence/week12/document-preview/deployment_guide_week12-1.png": "f9ea76022355d5c52688354179fb3bbd58af4bd5beb289018ca438c4ce9e73aa",
+    "docs/evidence/week12/document-preview/deployment_guide_week12-2.png": "034d376a19e82b9ddee5353e301b4d582197f540d4750364adcc36a90a62988a",
+    "docs/evidence/week12/document-preview/final_evidence_index_week12-1.png": "5dab66c188091ab590b15560533165ba58c0fc819184e9ac6bcae66f9d998b34",
+    "docs/evidence/week12/document-preview/final_evidence_index_week12-2.png": "f2d6b15855f923b09479f64d7ca25064d38128d88de3cc2ac6b9be6efc47d04f",
+    "docs/evidence/week12/document-preview/final_evidence_index_week12-3.png": "c41f8e7b51154e47f3f437efc5e51a90fdfe43f2cbaf4c38455a4bece3281c1a",
+    "docs/evidence/week12/document-preview/pages.json": "e8759a583b023e4aa3f1880220b62215168e0fac056a0de637282c5ca0cfbdb3",
+    "docs/evidence/week12/document-preview/vulnerability_report_week12-1.png": "55d1b3cfa94e9b7d1505d0511b9af03d7f035ac69b7e948338c5ba7ae5b01e20",
+    "docs/evidence/week12/document-preview/vulnerability_report_week12-2.png": "fa08948f49c22f0dea71b086585b6bc3b05494b4f793e98338c2c6f48d157e52",
+    "docs/evidence/week12/document-preview/week12_easy_explanation-1.png": "434b31e89556b9514306e72ae93e3d9019c0b0f9fd18fac8e04398d0fdcca918",
+    "docs/evidence/week12/document-preview/week12_easy_explanation-2.png": "1feb171f8d88b20a026411b94bcccaa28a89034e784d15af0e86b35b84ea8b25",
+    "docs/evidence/week12/document-preview/week12_easy_explanation-3.png": "865a40b586bd4e7afc6457bf95c42d8ae8d43e03e57b3bba2c094ed8c9f62446",
+    "docs/evidence/week12/document-preview/week12_report-1.png": "8f83083d25f700004b3841c34a4950f3bd5032c75e5ec8a170d750417fa4b49e",
+    "docs/evidence/week12/document-preview/week12_report-2.png": "8ae9d4298c8ec54406d7ae0635928f2fe09c8ac82dd40928e08d883942c77d1d",
+    "docs/evidence/week12/document-preview/week12_report-3.png": "48abc26299b29453023e40c6d2cd7fb515425bf07ff9abd6ef8480c171bfdfcf",
+    "docs/evidence/week12/final-evidence-index.json": "1546a11f01bec9f7e14d7b108a14dfd1cb4c772dc4eedd2683f20ee2d779f8eb",
+    "docs/evidence/week12/local-rpc-deployment.json": "d2caef563234140315d5c45a835ddaaff327bb1078714f4ced58b5477d2fdcb0",
+    "docs/evidence/week12/regression-tests.txt": "d9525aa94d0d05e7cb51d822e3424879630f0441d93a5e2c031d8749fb7a5299",
+    "docs/reports/build_week12_evidence.py": "d6771d38062fbd0e5d7de18301a4f5e4a8db093d1b8f3fd0de723945db16f8a1",
+    "docs/reports/deployment_guide_week12.docx": "df468596892c1df60f175843e983157891c32243b6d97b8a7d40c98d1cc8278b",
+    "docs/reports/deployment_guide_week12.pdf": "6e3b52dc9955315c597bad88957d753adcb20d1c2ff9dc86a8ec00ed9582a160",
+    "docs/reports/final_evidence_index_week12.docx": "19a1d18ebccb96cbff45966fb3aa1dcc0953c321ce4bcb03dbf83b9b90dbf0be",
+    "docs/reports/final_evidence_index_week12.pdf": "59d7597a4078617a8c5523c10160cb2806a50c395b337c39b9b9dca58b74af4e",
+    "docs/reports/generate_week12_reports.py": "986513a311292df6ed7eb0183798f9733d4f1f8976fedaea8b89aca8d79c7fb7",
+    "docs/reports/render_week12_pdfs.mjs": "2c18c3511529287170168465718fe43fae916d38e41acaeb275415547267b1e6",
+    "docs/reports/vulnerability_report_week12.docx": "c2109bef4140a721c6a29c2873e6300678d98c6d2056f2e62bea434deb8f476a",
+    "docs/reports/vulnerability_report_week12.pdf": "f355b305cbe57fd50e592c3ee7f5fea3292461b653af75a02fec82e580bb94d3",
+    "docs/reports/week12_content.json": "4f6768ecf00626e63773a31abade5acbfabd6bed79facfcffe879c0a1ca0eeb7",
+    "docs/reports/week12_easy_explanation.docx": "9bad67e69793a06e9404a82616d2f08bf7dcf69a5fabc16393c3c5bdb9f2f5b8",
+    "docs/reports/week12_easy_explanation.pdf": "322f79bedeb1429442f7f40fd89a6db1b942568320477aea758ec8bd02836ba1",
+    "docs/reports/week12_report.docx": "4de003bb03c63d71c909663d9049d6c26212a317317d41d7ae2e20d1a8e9b432",
+    "docs/reports/week12_report.pdf": "252072fcdc6bb567ef203b006c62af73b2bbdb780878595703b2c3914007eb59",
+    "frontend/.env.example": "5060a8f884b94e2b996ed0f87b3ff8eb52ee5c48bffbe2b64341a49cfef6f142",
+    "frontend/app/page.tsx": "81c67a26cf2b85b6d2efb48217ec0cc75c0469beec6c7f453118df9baeb274d3",
+    "frontend/lib/networkConfig.ts": "cd0e946d14062cd35375b1e4574c4ef2e8c09f9dcd0c4a34138466e1f6edf14d"
+  }
+}

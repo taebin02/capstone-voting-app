@@ -1,0 +1,26 @@
+{
+  "environment": "Week12-owned isolated localhost RPC on port 28545, not the user 8545 chain",
+  "actualPublicTestnet": false,
+  "receiptFile": "contract/deployments/31337/0xbff21b03a9214bdb0b5a059a112dae319bdeddff8b483470e56a2cf853afc037.json",
+  "receipt": {
+    "network": "localhost",
+    "chainId": "31337",
+    "deployer": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+    "gasEstimate": "3354956",
+    "gasLimit": "4025948",
+    "maxFeePerGas": "1536559790",
+    "balanceWei": "9999992789167539700265",
+    "deploymentBudgetWei": "6186109813430920",
+    "estimateOnly": false,
+    "transactionSent": true,
+    "contractAddress": "0x0165878A594ca255338adfa4d48449f69242Eb8F",
+    "transactionHash": "0xbff21b03a9214bdb0b5a059a112dae319bdeddff8b483470e56a2cf853afc037",
+    "blockNumber": 11,
+    "gasUsed": "3354956",
+    "bytecodeMatched": true,
+    "bytecodeHash": "0xbea2589c57bce4aa335a0b337d2dac65ab453c5739a37486fb5285b18b427f5b",
+    "admin": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+    "verifiedAt": "2026-11-24T02:41:47.959Z",
+    "compiler": "0.8.24"
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "date": "2026-11-24",
+  "actualPublicTestnetDeployment": false,
+  "environment": "Isolated in-memory Hardhat chain; no external RPC requests",
+  "checks": [
+    {
+      "name": "Sepolia disabled when credentials are not configured",
+      "status": "passed"
+    },
+    {
+      "name": "No implicit remote unlocked accounts when key is absent",
+      "status": "passed"
+    },
+    {
+      "name": "Malformed endpoint, insecure HTTP and malformed signing key rejected",
+      "status": "passed"
+    },
+    {
+      "name": "Mainnet and mismatched name/chain combinations rejected",
+      "status": "passed"
+    },
+    {
+      "name": "First and last default Hardhat accounts rejected for Sepolia; separate test address accepted",
+      "status": "passed"
+    },
+    {
+      "name": "Preflight estimates deployment without sending any transaction or mining a block",
+      "status": "passed"
+    },
+    {
+      "name": "Zero-balance signer cannot pass deployment preflight",
+      "status": "passed"
+    },
+    {
+      "name": "Deployment receipt, exact runtime bytecode and initial election state verified locally",
+      "status": "passed"
+    }
+  ],
+  "preflight": {
+    "network": "hardhat",
+    "chainId": "31337",
+    "deployer": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+    "gasEstimate": "3354956",
+    "gasLimit": "4025948",
+    "maxFeePerGas": "3000000000",
+    "balanceWei": "10000000000000000000000",
+    "deploymentBudgetWei": "12077844000000000",
+    "estimateOnly": true,
+    "transactionSent": false
+  },
+  "localDeployment": {
+    "network": "hardhat",
+    "chainId": "31337",
+    "deployer": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+    "gasEstimate": "3354956",
+    "gasLimit": "4025948",
+    "maxFeePerGas": "3000000000",
+    "balanceWei": "10000000000000000000000",
+    "deploymentBudgetWei": "12077844000000000",
+    "estimateOnly": false,
+    "transactionSent": true,
+    "contractAddress": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+    "transactionHash": "0xbc5d30887f22be23efcb46040fe992fa47d71a3012c2eadd51a0e1cfcd68ddf1",
+    "blockNumber": 1,
+    "gasUsed": "3354956",
+    "bytecodeMatched": true,
+    "bytecodeHash": "0xbea2589c57bce4aa335a0b337d2dac65ab453c5739a37486fb5285b18b427f5b",
+    "admin": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+    "verifiedAt": "2026-11-24T02:32:02.958Z",
+    "compiler": "0.8.24"
+  }
+}

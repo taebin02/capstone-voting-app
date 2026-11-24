@@ -2,8 +2,7 @@
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import VotingABI from "../lib/Voting.json";
-
-const CONTRACT_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+import { resolveVotingNetwork } from "../lib/networkConfig";
 
 export default function Home() {
   const [account, setAccount] = useState<string>("");
@@ -30,15 +29,24 @@ export default function Home() {
   const connectWallet = async () => {
     if (!(window as any).ethereum) { alert("MetaMask를 설치해주세요!"); return; }
     try {
-      await (window as any).ethereum.request({ method: "wallet_switchEthereumChain", params: [{ chainId: "0x7A69" }] });
+      const selectedNetwork = resolveVotingNetwork(process.env.NEXT_PUBLIC_CHAIN_ID, process.env.NEXT_PUBLIC_VOTING_ADDRESS);
+      await (window as any).ethereum.request({ method: "wallet_switchEthereumChain", params: [{ chainId: selectedNetwork.chainHex }] });
       const provider = new ethers.BrowserProvider((window as any).ethereum);
+      if ((await provider.getNetwork()).chainId !== BigInt(selectedNetwork.chainId)) {
+        throw new Error("연결된 체인이 설정과 일치하지 않습니다.");
+      }
+      if (await provider.getCode(selectedNetwork.address) === "0x") {
+        throw new Error("설정한 주소에 컨트랙트가 없습니다. 배포 주소를 확인해주세요.");
+      }
       await provider.send("eth_requestAccounts", []);
       const signer = await provider.getSigner();
       const address = await signer.getAddress();
+      const c = new ethers.Contract(selectedNetwork.address, VotingABI.abi, signer);
+      // Confirm the configured deployment exposes the expected read interface before enabling actions.
+      await c.requiredApprovals();
       setAccount(address);
-      const c = new ethers.Contract(CONTRACT_ADDRESS, VotingABI.abi, signer);
       setContract(c);
-      showToast("지갑 연결 완료");
+      showToast(`${selectedNetwork.label} 지갑 연결 완료`);
     } catch (e: any) { alert("연결 오류: " + e.message); }
   };
 

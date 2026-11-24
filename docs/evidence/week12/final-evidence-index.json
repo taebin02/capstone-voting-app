@@ -1,0 +1,344 @@
+{
+  "date": "2026-11-24",
+  "purpose": "Evidence navigation for final report; reference presence/hashes verified, not a new independent security audit",
+  "counts": {
+    "resolved": 12,
+    "partial": 1,
+    "residual": 2
+  },
+  "items": [
+    {
+      "id": "1",
+      "finding": "강제 종료 부재 / SC10 / High",
+      "status": "resolved",
+      "diagnosis": "STRIDE DoS·소스 검토",
+      "before": [
+        "git:17fbc7a:contract/contracts/Voting.sol"
+      ],
+      "action": "비상 정지·재개 후 멀티시그 적용",
+      "after": [
+        "docs/evidence/week8/tests.txt"
+      ],
+      "remaining": "과거 화면이 없어 Before 소스로 확인. 공모·키 탈취 위험 별도."
+    },
+    {
+      "id": "2",
+      "finding": "화면/체인 시계 격차 / SC03 / Medium",
+      "status": "resolved",
+      "diagnosis": "수동 관찰·시간 조건 분석",
+      "before": [
+        "docs/evidence/week8/browser/before-finalize-estimation.json"
+      ],
+      "action": "finalize 저장 및 오래된 블록의 가스 추정 경로 보완",
+      "after": [
+        "docs/evidence/week8/metamask/result.json",
+        "docs/evidence/week12/regression-tests.txt"
+      ],
+      "remaining": "7주차 시간 재현 수치는 이전 작업 환경 측정. 8주차 실제 확인과 구분."
+    },
+    {
+      "id": "3",
+      "finding": "최초 관리자 키 분실 / SC01 / High",
+      "status": "partial",
+      "diagnosis": "STRIDE DoS·권한 검토",
+      "before": [
+        "git:17fbc7a:contract/contracts/Voting.sol"
+      ],
+      "action": "관리자 3명 중 다른 2명으로 운영 가능",
+      "after": [
+        "docs/evidence/week11/risk-observations.json"
+      ],
+      "remaining": "최초 관리자 제거 불가. 정상 키 2개 미만이면 복구 보장 불가."
+    },
+    {
+      "id": "4",
+      "finding": "관리자 상호 강퇴 / SC01 / High",
+      "status": "resolved",
+      "diagnosis": "STRIDE 권한 상승·코드 검토",
+      "before": [
+        "git:17fbc7a:contract/contracts/Voting.sol"
+      ],
+      "action": "관리자 제거도 2명 승인",
+      "after": [
+        "docs/evidence/week8/tests.txt"
+      ],
+      "remaining": "2명 공모나 과거 승인 처리까지 해결하지 않음."
+    },
+    {
+      "id": "5",
+      "finding": "행위 이벤트 부족 / 로깅 / Medium",
+      "status": "resolved",
+      "diagnosis": "STRIDE 행위 추적·ABI 분석",
+      "before": [
+        "git:17fbc7a:contract/contracts/Voting.sol"
+      ],
+      "action": "현재 이벤트 13종 및 기록 검증",
+      "after": [
+        "docs/evidence/week10/demo-audit-log.txt"
+      ],
+      "remaining": "현재 제공 함수 범위. 로그는 행위 자체의 정당성을 보장하지 않음."
+    },
+    {
+      "id": "6",
+      "finding": "hasVoted·거래 입력 공개 / 프라이버시 / Low",
+      "status": "residual",
+      "diagnosis": "정보 공개·거래 입력 분석",
+      "before": [
+        "contract/contracts/Voting.sol"
+      ],
+      "action": "공개 경로 재현, 익명 투표는 후속 과제로 문서화",
+      "after": [
+        "docs/evidence/week11/risk-observations.json",
+        "docs/reports/security_guide_week11.pdf"
+      ],
+      "remaining": "기술적 미해결. 주소와 선택 연결 가능."
+    },
+    {
+      "id": "7",
+      "finding": "개인키 유출 시 도용 / SC01 인접 / Medium",
+      "status": "residual",
+      "diagnosis": "신원 위장·임시 키 복사 실험",
+      "before": [
+        "contract/contracts/Voting.sol"
+      ],
+      "action": "예방·사고 대응 지침 및 기존 통제 범위 확인",
+      "after": [
+        "docs/evidence/week11/risk-observations.json",
+        "docs/reports/security_guide_week11.pdf"
+      ],
+      "remaining": "탈취 키의 서명 구별 불가. 실제 사용자 키 보관·복구 훈련은 미검증."
+    },
+    {
+      "id": "8 V-A",
+      "finding": "선거 중 유권자 추가 / SC01 / High",
+      "status": "resolved",
+      "diagnosis": "6주차 자동 재현",
+      "before": [
+        "git:da70115:contract/test/Voting.test.js"
+      ],
+      "action": "beforeElection으로 시작 후 유권자 등록 차단",
+      "after": [
+        "docs/evidence/week12/regression-tests.txt"
+      ],
+      "remaining": "주소와 사람의 일치, 시작 전 명부 정확성은 운영 절차 필요."
+    },
+    {
+      "id": "9 V-B",
+      "finding": "선거 중 후보 추가 / SC01 / High",
+      "status": "resolved",
+      "diagnosis": "6주차 자동 재현",
+      "before": [
+        "git:da70115:contract/test/Voting.test.js"
+      ],
+      "action": "beforeElection으로 시작 후 후보 추가 차단",
+      "after": [
+        "docs/evidence/week12/regression-tests.txt"
+      ],
+      "remaining": "최초 후보 내용의 사실성은 별도 확인."
+    },
+    {
+      "id": "10 V-C",
+      "finding": "관리자 중복 추가 / SC03 / Medium",
+      "status": "resolved",
+      "diagnosis": "6주차 재현·9주차 방어 전후 비교",
+      "before": [
+        "docs/evidence/week9/before-defense-tests.txt"
+      ],
+      "action": "실행 시 중복·0주소 추가 거부",
+      "after": [
+        "docs/evidence/week9/after-tests.txt",
+        "docs/evidence/week9/metamask/result.json"
+      ],
+      "remaining": "실행 때 거부되는 무효 제안이 대기 목록에 남을 수 있음."
+    },
+    {
+      "id": "11 V-D",
+      "finding": "비관리자 제거로 인원 감소 / SC01+SC03 / High",
+      "status": "resolved",
+      "diagnosis": "6주차 재현·9주차 방어 전후 비교",
+      "before": [
+        "docs/evidence/week9/before-defense-tests.txt"
+      ],
+      "action": "실제 관리자 여부와 최소 인원 검사",
+      "after": [
+        "docs/evidence/week9/after-tests.txt",
+        "docs/evidence/week9/metamask/result.json"
+      ],
+      "remaining": "최초 관리자 제거 불가 정책은 유지."
+    },
+    {
+      "id": "12 V-E",
+      "finding": "종료 후 선거 재시작 / SC03 / Medium",
+      "status": "resolved",
+      "diagnosis": "6주차 재현·9주차 방어 전후 비교",
+      "before": [
+        "docs/evidence/week9/before-defense-tests.txt"
+      ],
+      "action": "endTime == 0으로 모든 재시작 차단",
+      "after": [
+        "docs/evidence/week9/after-tests.txt",
+        "docs/evidence/week9/metamask/result.json"
+      ],
+      "remaining": "한 컨트랙트당 선거 1회. 재선거는 새 배포."
+    },
+    {
+      "id": "13 V-F",
+      "finding": "후보 0명 결과 오류 / SC03 / Low",
+      "status": "resolved",
+      "diagnosis": "6주차 후보 0명 재현",
+      "before": [
+        "git:da70115:contract/test/Voting.test.js"
+      ],
+      "action": "finalize에서 후보 존재 조건 검사",
+      "after": [
+        "docs/evidence/week12/regression-tests.txt"
+      ],
+      "remaining": "후보 0명 선거 시작 자체를 차단한 것은 아님."
+    },
+    {
+      "id": "14 V-G",
+      "finding": "동점 시 등록 순서로 당선 / SC03 / Medium",
+      "status": "resolved",
+      "diagnosis": "자동 재현·정책 검토",
+      "before": [
+        "docs/evidence/week10/before-outcome-defense.txt"
+      ],
+      "action": "동점·0표 당선자 없음, 결과 사유 저장",
+      "after": [
+        "docs/evidence/week10/after-tests.txt",
+        "docs/evidence/week10/metamask/result.json"
+      ],
+      "remaining": "Before 실패에는 새 getter·이벤트 부재도 포함. 독립 취약점 수로 세지 않음."
+    },
+    {
+      "id": "15",
+      "finding": "정지 중 선두 조회 / 정보 공개 / Low",
+      "status": "resolved",
+      "diagnosis": "정지 중 조회 재현",
+      "before": [
+        "docs/evidence/week10/before-disclosure-defense.txt"
+      ],
+      "action": "getWinner의 미확정 예외 제거",
+      "after": [
+        "docs/evidence/week10/after-tests.txt",
+        "docs/evidence/week10/metamask/paused-check.json"
+      ],
+      "remaining": "공개 득표·거래 입력까지 숨기는 조치 아님."
+    }
+  ],
+  "references": [
+    {
+      "reference": "contract/contracts/Voting.sol",
+      "kind": "working tree artifact",
+      "bytes": 12868,
+      "sha256": "911923d5ec9f93de4e8613aa092b56cf7af01cda5fdefeee032c5a6f23b245de"
+    },
+    {
+      "reference": "docs/evidence/week10/after-tests.txt",
+      "kind": "working tree artifact",
+      "bytes": 6619,
+      "sha256": "0d013578d0979441614a6fe90a3dc56cfebb0f8fb1a188c46b19d3e223a058d5"
+    },
+    {
+      "reference": "docs/evidence/week10/before-disclosure-defense.txt",
+      "kind": "working tree artifact",
+      "bytes": 1662,
+      "sha256": "f9521849d0c1e0f0343725bd0920ba1398a90b5d0f63fc5b05a23dbea4b6cb02"
+    },
+    {
+      "reference": "docs/evidence/week10/before-outcome-defense.txt",
+      "kind": "working tree artifact",
+      "bytes": 4533,
+      "sha256": "09e1e57e1515dde42fe965c17b921e1508c0cb897350753d26662cbabaecd662"
+    },
+    {
+      "reference": "docs/evidence/week10/demo-audit-log.txt",
+      "kind": "working tree artifact",
+      "bytes": 7851,
+      "sha256": "37c036ebf99b148a5ecf851d280d1987e72c4089b13a70193e4ed61234ebc7d6"
+    },
+    {
+      "reference": "docs/evidence/week10/metamask/paused-check.json",
+      "kind": "working tree artifact",
+      "bytes": 314,
+      "sha256": "29f78dd6a480bc562c054617a0cd78c69eaeb68953e9cfcd0191fe15bb0ddc4e"
+    },
+    {
+      "reference": "docs/evidence/week10/metamask/result.json",
+      "kind": "working tree artifact",
+      "bytes": 758,
+      "sha256": "a993b036ab6dba86544ef86c4bd6e98c9820b2dadc4f25a272b091c8ca5adf6f"
+    },
+    {
+      "reference": "docs/evidence/week11/risk-observations.json",
+      "kind": "working tree artifact",
+      "bytes": 2355,
+      "sha256": "f3e0fd6b193521fd06d839bc843b3231832a1f6beeda45cdfe3130e72cb28fca"
+    },
+    {
+      "reference": "docs/evidence/week12/regression-tests.txt",
+      "kind": "working tree artifact",
+      "bytes": 6524,
+      "sha256": "d9525aa94d0d05e7cb51d822e3424879630f0441d93a5e2c031d8749fb7a5299"
+    },
+    {
+      "reference": "docs/evidence/week8/browser/before-finalize-estimation.json",
+      "kind": "working tree artifact",
+      "bytes": 1397,
+      "sha256": "6b8684d8c34adfa3cd225dc8aecb965d95d2044e5044110a0ce87168f16206e8"
+    },
+    {
+      "reference": "docs/evidence/week8/metamask/result.json",
+      "kind": "working tree artifact",
+      "bytes": 1613,
+      "sha256": "88d8a4717a542aebd1d6d0077471f7ac2a63ae3ff80a02aafd6e9de412896418"
+    },
+    {
+      "reference": "docs/evidence/week8/tests.txt",
+      "kind": "working tree artifact",
+      "bytes": 4969,
+      "sha256": "d4eced650e4a670a252709035d3bdab3bf32bcec367f19a9087c2018382ef873"
+    },
+    {
+      "reference": "docs/evidence/week9/after-tests.txt",
+      "kind": "working tree artifact",
+      "bytes": 5757,
+      "sha256": "5dd7287180905744f838298df0249f53f302a4dae445906c412dec5bb734dbad"
+    },
+    {
+      "reference": "docs/evidence/week9/before-defense-tests.txt",
+      "kind": "working tree artifact",
+      "bytes": 6335,
+      "sha256": "0c9aa0f0b98f56ce3972d42cbebb79bc37c624df3a732e8f127422dc0c4758ac"
+    },
+    {
+      "reference": "docs/evidence/week9/metamask/result.json",
+      "kind": "working tree artifact",
+      "bytes": 958,
+      "sha256": "724cc3e5d41a47eb92171e86dd4ba9c21df4c0795d3d18a5c568d500e10d8640"
+    },
+    {
+      "reference": "docs/reports/security_guide_week11.pdf",
+      "kind": "working tree artifact",
+      "bytes": 268437,
+      "sha256": "b2d2fae15c790d3fd97a8d91a95d2b4709a5a5c66454af185dab2ccea20bdf88"
+    },
+    {
+      "reference": "git:17fbc7a:contract/contracts/Voting.sol",
+      "kind": "historical source/test",
+      "bytes": 2642,
+      "sha256": "1f4222c13ed0affdeceac78d9d40aa6529fabf9e63d94e2b9864d54f0f6e07b5"
+    },
+    {
+      "reference": "git:da70115:contract/test/Voting.test.js",
+      "kind": "historical source/test",
+      "bytes": 12316,
+      "sha256": "561643d1e7b01b7c5e71ae46bca8c6b9f80a9f10478364ddc33053c368f6b14e"
+    }
+  ],
+  "additionalReview": [
+    "Proposal expiration/cancellation absent",
+    "Removed administrators previous approvals retained"
+  ],
+  "actualSepoliaDeployment": false
+}
